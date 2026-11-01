@@ -541,6 +541,28 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
       img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(new XMLSerializer().serializeToString(svg));
     });
   }
+  function hasWording(){return !!($('f_title').value.trim()||$('f_rec').value.trim()||$('f_date').value.trim()||$('f_by').value.trim()||$('f_msg').value.trim());}
+  function artPng(){
+    return new Promise(function(res,rej){
+      var m=curModel(),o={};for(var kk in m)o[kk]=m[kk];
+      var pw,ph,inner,pad=30;
+      if(isPlaque()){
+        var sz=BOARD[S.coll].sizes.filter(function(s){return s[0]===S.size;})[0],w0=sz[1],h0=sz[2];
+        var ratio=w0/h0;if(S.orient==='landscape')ratio=h0/w0;
+        var W=1000,H=1000,bw=W*0.84,bh=bw/ratio;if(bh>H*0.84){bh=H*0.84;bw=bh*ratio;}
+        var padp=Math.min(bw,bh)*0.13;pw=bw-2*padp;ph=bh-2*padp;
+        inner=drawBorder(0,0,pw,ph,'#000000',S.border||'thin')+textBlock(pw/2,ph/2,pw*((S.border==='flourish')?0.7:(S.border==='greek'?0.64:0.8)),ph*((S.border==='flourish')?0.66:(S.border==='greek'?0.7:0.82)),'#000000');
+      }else{
+        var P=PH[m.img],a=m.area;pw=P.w*(a[2]-a[0]);ph=P.h*(a[3]-a[1]);
+        inner=textBlock(pw/2,ph/2,pw*0.94,ph*0.94,'#000000');
+      }
+      var vw=pw+2*pad,vh=ph+2*pad,outW=2400,outH=Math.round(outW*vh/vw);
+      var svg='<svg xmlns="'+NS+'" width="'+outW+'" height="'+outH+'" viewBox="'+(-pad)+' '+(-pad)+' '+vw+' '+vh+'"><rect x="'+(-pad)+'" y="'+(-pad)+'" width="'+vw+'" height="'+vh+'" fill="#ffffff"/>'+inner+'</svg>';
+      var img=new Image();
+      img.onload=function(){var cv=document.createElement('canvas');cv.width=outW;cv.height=outH;var x=cv.getContext('2d');x.fillStyle='#ffffff';x.fillRect(0,0,outW,outH);x.drawImage(img,0,0,outW,outH);try{cv.toBlob(function(b){res(b);},'image/png');}catch(e){rej(e);}};
+      img.onerror=rej;img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+    });
+  }
   function setMsg(t,c){var m=$('msg');m.textContent=t;m.className=c||'';}
   $('send').addEventListener('click',function(){
     if($('website').value)return;
@@ -553,12 +575,13 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     var total=(lf?lf.size:0)+(rf?rf.size:0);
     if((lf&&lf.size>4e6)||(rf&&rf.size>4e6)||total>4.6e6){setMsg('Your files are too large. Please keep them under 4 MB each (4.5 MB together), or email them to us after sending.','bad');return;}
     var btn=$('send');btn.disabled=true;setMsg('Sending...','');
-    previewPng().then(function(blob){
-      var fd=new FormData();
+    Promise.all([previewPng(),hasWording()?artPng():Promise.resolve(null)]).then(function(rr){
+      var blob=rr[0],fd=new FormData();
       fd.append('name',name);fd.append('email',email);fd.append('_replyto',email);
       fd.append('_subject','Award design request: '+curModel().name);fd.append('_captcha','false');fd.append('_template','box');
       fd.append('order_details',summaryText());
       fd.append('layout_preview',blob,'award-layout-preview.png');
+      if(rr[1])fd.append('engraving_art',rr[1],'engraving-art-black-on-white.png');
       if(lf)fd.append('logo',lf,lf.name);
       if(rf)fd.append('reference',rf,rf.name);
       return fetch('https://formsubmit.co/'+FORM_EMAIL,{method:'POST',mode:'no-cors',body:fd});
