@@ -98,6 +98,9 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     <p class="note">The plate is two-layer laser-engraved acrylic mounted on the board. The first color is the plate surface, and the second is the color revealed by engraving. All four cost the same.</p>
     <label>Layout</label>
     <div class="sizes two" id="orient"></div>
+    <label>Border style</label>
+    <div class="sizes" id="borders"></div>
+    <p class="note">The border is engraved around the edge of the plate. We'll adjust it to fit your wording on the proof.</p>
   </div>
 
   <div class="panel">
@@ -216,7 +219,8 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     pblack:{fill:'#0d0d12',edge:'#0d0d12',hi:'#3b3b46'}
   };
 
-  var S={coll:'classic',model:null,size:'5 x 7',finish:'walnut',plate:'black-gold',orient:'portrait',dm:'custom'};
+  var S={coll:'classic',model:null,size:'5 x 7',finish:'walnut',plate:'black-gold',orient:'portrait',border:'thin',dm:'custom'};
+  var BORDERS=[['thin','Thin line'],['double','Double line'],['thick','Thick and thin'],['flourish','Corner flourishes'],['none','No border']];
 
   function curModels(){
     if(S.coll==='classic'||S.coll==='piano'){
@@ -289,6 +293,26 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
   }
 
   /* ---------- drawings ---------- */
+  function drawBorder(x,y,w,h,c,style){
+    var s='';
+    function rect(i,sw,op){return '<rect x="'+(x+i)+'" y="'+(y+i)+'" width="'+(w-2*i)+'" height="'+(h-2*i)+'" fill="none" stroke="'+c+'" stroke-width="'+sw+'" stroke-opacity="'+(op||0.8)+'"/>';}
+    var m=Math.min(w,h);
+    if(style==='none')return '';
+    if(style==='thin')return rect(m*0.035,1,0.7);
+    if(style==='double')return rect(m*0.03,1.1)+rect(m*0.06,1.1);
+    if(style==='thick')return rect(m*0.03,m*0.02)+rect(m*0.065,0.9);
+    // flourish
+    var i=m*0.035,r=m*0.15,o='';
+    s+=rect(i,0.9,0.75);
+    [[0,0,1,1],[1,0,-1,1],[0,1,1,-1],[1,1,-1,-1]].forEach(function(k){
+      var cx=x+(k[0]?w-i:i),cy=y+(k[1]?h-i:i),dx=k[2],dy=k[3];
+      // quarter-circle swirl plus inner curl and dot
+      s+='<path d="M '+(cx+dx*r)+' '+cy+' A '+r+' '+r+' 0 0 '+((dx*dy>0)?1:0)+' '+cx+' '+(cy+dy*r)+'" fill="none" stroke="'+c+'" stroke-width="1.4" stroke-opacity="0.95"/>';
+      s+='<path d="M '+(cx+dx*r*0.55)+' '+cy+' A '+(r*0.55)+' '+(r*0.55)+' 0 0 '+((dx*dy>0)?1:0)+' '+cx+' '+(cy+dy*r*0.55)+'" fill="none" stroke="'+c+'" stroke-width="1" stroke-opacity="0.85"/>';
+      s+='<circle cx="'+(cx+dx*r*0.28)+'" cy="'+(cy+dy*r*0.28)+'" r="'+(m*0.012)+'" fill="'+c+'" fill-opacity="0.95"/>';
+    });
+    return s;
+  }
   function drawPlaque(o,W,H,mini){
     var f=FIN[o.finish],p=plateObj(),bw,bh;
     var ratio=o.w/o.h;if(o.orient==='landscape')ratio=o.h/o.w;
@@ -301,7 +325,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     else s+='<image href="'+BI.u+'" x="'+x+'" y="'+y+'" width="'+bw+'" height="'+bh+'" preserveAspectRatio="none" clip-path="url(#bclip)"/>';
     var px=x+pad,py=y+pad,pw=bw-2*pad,ph=bh-2*pad;
     s+='<rect x="'+px+'" y="'+py+'" width="'+pw+'" height="'+ph+'" fill="'+p.bg+'" stroke="rgba(0,0,0,.35)"/><rect x="'+px+'" y="'+py+'" width="'+pw+'" height="'+ph+'" fill="url(#pg1)"/>';
-    s+='<rect x="'+(px+pw*0.04)+'" y="'+(py+ph*0.03)+'" width="'+(pw*0.92)+'" height="'+(ph*0.94)+'" fill="none" stroke="'+p.fg+'" stroke-opacity=".55" stroke-width="1"/>';
+    s+=drawBorder(px,py,pw,ph,p.fg,o.border||'thin');
     s+=mini?bars(x+bw/2,y+bh/2,pw*0.7,ph*0.55,p.fg):textBlock(x+bw/2,y+bh/2,pw*0.8,ph*0.82,p.fg);
     return s;
   }
@@ -343,7 +367,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     return drawPhoto(o,W,H,mini);
   }
   function thumbSvg(m){
-    var o=m.type==='plaque'?{type:'plaque',finish:S.finish,orient:'portrait',w:6,h:8}:m;
+    var o=m.type==='plaque'?{type:'plaque',finish:S.finish,orient:'portrait',border:S.border,w:6,h:8}:m;
     return '<svg class="th" viewBox="0 0 200 150" aria-hidden="true">'+(m.type==='plaque'?drawPlaque(o,200,150,true):drawPhoto({img:m.img},200,150,true))+'</svg>';
   }
 
@@ -375,6 +399,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     var B=BOARD[S.coll];
     btnRow($('sizes'),B.sizes.map(function(s){return [s[0],s[0]+' in \u2022 '+money(s[3]+DESIGN_FEE)];}),S.size,function(v){S.size=v;refresh();});
     btnRow($('finishes'),B.finishes,S.finish,function(v){S.finish=v;refresh();});
+    btnRow($('borders'),BORDERS,S.border,function(v){S.border=v;refresh();});
     btnRow($('orient'),[['portrait','Portrait (tall)'],['landscape','Landscape (wide)']],S.orient,function(v){S.orient=v;refresh();});
     var pl=$('plates');pl.innerHTML='';
     PLATES.forEach(function(p){var b=document.createElement('button');b.type='button';b.className='pl';pressed(b,S.plate===p.id);
@@ -390,7 +415,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     var f=BOARD[S.coll].finishes;for(var i=0;i<f.length;i++)if(f[i][0]===S.finish)return f[i][1];return '';
   }
   function buildPreview(){
-    var m=curModel(),o={};for(var kk in m)o[kk]=m[kk];o.finish=S.finish;o.orient=S.orient;o.w=0;o.h=0;
+    var m=curModel(),o={};for(var kk in m)o[kk]=m[kk];o.finish=S.finish;o.orient=S.orient;o.border=S.border;o.w=0;o.h=0;
     if(isPlaque()){var sz=BOARD[S.coll].sizes.filter(function(s){return s[0]===S.size;})[0];o.w=sz[1];o.h=sz[2];}
     $('pv').innerHTML='<rect width="400" height="420" fill="#ffffff"/>'+draw(o,400,420,false);
     var h='Layout preview only. Your final design will be prepared for this award and sent for approval before engraving. Colors and finishes may vary from your screen.';
@@ -419,7 +444,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     var rt=ar>=1?('about '+ar.toFixed(1)+' times wider than it is tall'):('about '+(1/ar).toFixed(1)+' times taller than it is wide');
     var where=isPlaque()?'on a laser-engraved plate mounted in the middle of the board (the plate is roughly three-quarters of the board size, same orientation)':m.note.replace(/^The wording is engraved (in gold )?/,'').replace(/\.$/,'').replace(/\. The close-up.*$/,'');
     a.push('Create a clean black-and-white design for laser engraving on '+kind+' ('+(isPlaque()?'size: '+S.size+' inches, '+S.orient+' layout':'size: '+m.size)+'). The design is engraved '+where+'.');
-    a.push('Design area: '+(shape==='oval'?'an':'a')+' '+shape+' '+rt+'. Fill that shape only, with nothing outside it. The exact size is confirmed on the proof, so keep the layout flexible. Pure black artwork on a plain white background, no gray, no gradients, no shading, no photos. Bold, easy-to-read lettering and simple shapes. Leave a little empty margin around the edge.');
+    a.push('Design area: '+(shape==='oval'?'an':'a')+' '+shape+' '+rt+'. Fill that shape only, with nothing outside it. The exact size is confirmed on the proof, so keep the layout flexible. Pure black artwork on a plain white background, no gray, no gradients, no shading, no photos. Bold, easy-to-read lettering and simple shapes. Leave a little empty margin around the edge.'+(isPlaque()?' Border: '+({thin:'a single thin line',double:'a double line (two thin lines)',thick:'one thick line with a thin line inside it',flourish:'a thin line with decorative flourishes in the four corners',none:'no border'})[S.border]+'.':''));
     var t=$('f_title').value.trim(),r=$('f_rec').value.trim(),d=$('f_date').value.trim(),by=$('f_by').value.trim(),ms=$('f_msg').value.trim(),st=$('f_style').value.trim();
     var ex=[];if(t)ex.push('Award title: '+t);if(r)ex.push('Recipient: '+r);if(d)ex.push('Date: '+d);if(by)ex.push('Presented by: '+by);if(ms)ex.push('Inscription: '+ms);
     a.push(ex.length?'Use ONLY this exact wording, spelled exactly as written, with no extra words:\n'+ex.join('\n'):'Use only the wording I give you, spelled exactly as written, with no extra words.');
@@ -433,7 +458,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     L.push('Award: '+m.name+' ('+sku()+')');
     L.push('Collection: '+COLL.filter(function(c){return c.id===S.coll;})[0].name);
     L.push('Size: '+curSize());
-    if(isPlaque()){L.push('Board finish: '+finishLabel());L.push('Plate: '+plateObj().label);L.push('Layout: '+S.orient);}
+    if(isPlaque()){L.push('Board finish: '+finishLabel());L.push('Plate: '+plateObj().label);L.push('Layout: '+S.orient);L.push('Border: '+BORDERS.filter(function(b){return b[0]===S.border;})[0][1]);}
     L.push('Quantity: '+($('f_qty').value||1)+(( $('f_vary').checked)?' (names/dates/wording differ)':' (same design)'));
     L.push('Needed by: '+($('f_need').value||'not specified')+'   Fulfillment: '+$('f_ful').value);
     L.push('');
