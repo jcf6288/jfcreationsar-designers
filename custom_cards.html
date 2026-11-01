@@ -116,8 +116,10 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
       <div><label class="first" for="f_qty">How many cards?</label><input type="number" id="f_qty" min="1" max="500" value="1"></div>
       <div><label class="first" for="f_need">Needed by (optional)</label><input type="date" id="f_need"></div>
     </div>
+    <label for="f_ship">Delivery</label>
+    <select id="f_ship"><option value="ship">Ship it to me (+$5.00 flat shipping)</option><option value="pickup">Local pickup (Central Arkansas, arranged by email)</option></select>
     <div class="price" id="priceBox"></div>
-    <p class="note">Price is per card, before tax and shipping. For more than one card, or different wording on each, we'll confirm the total with your proof. A needed-by date is a request, not a guarantee.</p>
+    <p class="note">Price is per card, before tax. Shipping is a flat $5.00 per order. For more than one card, or different wording on each, we'll confirm the total with your proof. A needed-by date is a request, not a guarantee.</p>
   </div>
 
   <div class="panel">
@@ -156,7 +158,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
   var LAYS=[['deploy','Deployment'],['wedding','Wedding day'],['recog','Officer or graduate'],['hand','Handwritten note'],['custom','Your own words']];
   var LAYNOTE={deploy:'A message for a son or daughter who is deploying.',wedding:'A message for a son or daughter on their wedding day.',recog:'A recognition card for an officer, graduate or award presentation.',hand:'We engrave your own handwriting, like a note from a parent or loved one.',custom:'Any words you like, with a title and a signature.'};
   var S={mat:'black',lay:'deploy'};
-  var f={};['f_rel','f_name','f_date','f_partner','f_sig','r_to','r_l2','r_l3','r_by','c_title','c_sub','c_body','h_note','f_qty','f_need','cname','cemail','cphone','cnotes'].forEach(function(i){f[i]=$(i);});
+  var f={};['f_rel','f_name','f_date','f_partner','f_sig','r_to','r_l2','r_l3','r_by','c_title','c_sub','c_body','h_note','f_qty','f_need','f_ship','cname','cemail','cphone','cnotes'].forEach(function(i){f[i]=$(i);});
   var CARD={x:50,y:64,w:900,h:572};
   function mat(){return MATS.filter(function(m){return m.id===S.mat;})[0];}
   var cv=document.createElement('canvas').getContext('2d');
@@ -294,12 +296,14 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
   }
   function price(){return mat().price+(mir()?8:0);}
   function money(n){return '$'+n.toFixed(2);}
+  function shipFee(){return f.f_ship.value==='ship'?5:0;}
   function buildPrice(){
     var m=mat(),q=Math.max(1,parseInt(f.f_qty.value,10)||1);
     var h='<div class="ln"><span>'+esc(m.name)+' card</span><span>'+money(m.price)+'</span></div>';
     if(mir())h+='<div class="ln"><span>Miranda warning on the back</span><span>'+money(8)+'</span></div>';
-    if(q>1)h+='<div class="ln"><span>Quantity</span><span>'+q+'</span></div>';
-    h+='<div class="tot"><span>Per card</span><span>'+money(price())+'</span></div>';
+    if(q>1)h+='<div class="ln"><span>Per card x '+q+'</span><span>'+money(price()*q)+'</span></div>';
+    h+='<div class="ln"><span>'+(shipFee()?'Shipping (flat, per order)':'Local pickup')+'</span><span>'+(shipFee()?'+'+money(shipFee()):'$0.00')+'</span></div>';
+    h+='<div class="tot"><span>Estimated total</span><span>'+money(price()*q+shipFee())+'</span></div>';
     $('priceBox').innerHTML=h;
   }
   function summary(){
@@ -309,7 +313,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     else if(S.lay==='recog'){L.push('Presented to: '+f.r_to.value.trim());L.push('Organization: '+f.r_l2.value.trim());L.push('Event/date: '+f.r_l3.value.trim());L.push('Presented by: '+f.r_by.value.trim());L.push('American flag: yes (standard)');L.push('Miranda warning on back: '+(mir()?'YES (+$8.00 per card)':'no'));}
     else if(S.lay==='hand'){L.push('Handwriting file: '+($('h_file').files[0]?$('h_file').files[0].name:'none'));L.push('Notes: '+f.h_note.value.trim());}
     else{L.push('Title: '+f.c_title.value.trim());L.push('Subtitle: '+f.c_sub.value.trim());L.push('Message: '+f.c_body.value.trim());L.push('Signature: '+f.f_sig.value.trim());}
-    L.push('');L.push('Customer: '+f.cname.value.trim()+' <'+f.cemail.value.trim()+'> '+f.cphone.value.trim());L.push('Notes: '+f.cnotes.value.trim());
+    L.push('Delivery: '+(shipFee()?'Ship to customer (+$5.00)':'Local pickup'));L.push('');L.push('Customer: '+f.cname.value.trim()+' <'+f.cemail.value.trim()+'> '+f.cphone.value.trim());L.push('Notes: '+f.cnotes.value.trim());
     return L.join('\n');
   }
   function showFields(){
