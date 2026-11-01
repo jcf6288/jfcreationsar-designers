@@ -188,9 +188,9 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     {id:'clocks',name:'Personalized Clocks',note:'Each clock has its own personalization area. We confirm the exact spot on your proof.'}
   ];
   var BOARD={
-    classic:{base:40,sizes:[['5 x 7',5,7],['6 x 8',6,8],['7 x 9',7,9],['8 x 10',8,10],['9 x 12',9,12]],finishes:[['walnut','Walnut finish, black edge'],['black','Solid black']],
+    classic:{base:40,sizes:[['5 x 7',5,7,40],['6 x 8',6,8,45],['7 x 9',7,9,50],['8 x 10',8,10,58],['9 x 12',9,12,68]],finishes:[['walnut','Walnut finish, black edge'],['black','Solid black']],
       sku:{walnut:{'5 x 7':'VAL757','6 x 8':'VAL768','7 x 9':'VAL779','8 x 10':'VAL7810','9 x 12':'VAL7912'},black:{'5 x 7':'VAL357','6 x 8':'VAL368','7 x 9':'VAL379','8 x 10':'VAL3810','9 x 12':'VAL3912'}}},
-    piano:{base:50,sizes:[['8 x 10',8,10],['9 x 12',9,12]],finishes:[['rosewood','Rosewood piano finish'],['pblack','Black piano finish']],
+    piano:{base:50,sizes:[['8 x 10',8,10,68],['9 x 12',9,12,78]],finishes:[['rosewood','Rosewood piano finish'],['pblack','Black piano finish']],
       sku:{rosewood:{'8 x 10':'VPN1810','9 x 12':'VPN1912'},pblack:{'8 x 10':'VPN2810','9 x 12':'VPN2912'}}}
   };
   var FIXED={
@@ -221,7 +221,8 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
   function curModels(){
     if(S.coll==='classic'||S.coll==='piano'){
       var b=BOARD[S.coll];
-      return [{id:S.coll+'-plaque',name:S.coll==='classic'?'Classic Custom Plaque':'Piano-Finish Custom Plaque',size:'Choose a board size',base:b.base,type:'plaque'}];
+      var sz=b.sizes.filter(function(s){return s[0]===S.size;})[0];
+      return [{id:S.coll+'-plaque',name:S.coll==='classic'?'Classic Custom Plaque':'Piano-Finish Custom Plaque',size:'Choose a board size',base:sz[3],from:b.sizes[0][3],type:'plaque'}];
     }
     return FIXED[S.coll];
   }
@@ -358,7 +359,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     var ms=curModels();curModel();
     ms.forEach(function(m){
       var b=document.createElement('button');b.type='button';b.className='opt';pressed(b,S.model===m.id);
-      b.innerHTML=thumbSvg(m)+'<b>'+esc(m.name)+'</b><span>'+esc(m.size)+'</span><i class="tag">'+money(m.base+DESIGN_FEE)+'</i>';
+      b.innerHTML=thumbSvg(m)+'<b>'+esc(m.name)+'</b><span>'+esc(m.size)+'</span><i class="tag">'+(m.from?'From ':'')+money((m.from||m.base)+DESIGN_FEE)+'</i>';
       b.onclick=function(){S.model=m.id;refresh();};g.appendChild(b);
     });
     g.style.gridTemplateColumns=ms.length===1?'1fr':'repeat(2,1fr)';
@@ -372,7 +373,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     $('plaquePanel').style.display=isPlaque()?'':'none';
     if(!isPlaque())return;
     var B=BOARD[S.coll];
-    btnRow($('sizes'),B.sizes.map(function(s){return [s[0],s[0]+' in'];}),S.size,function(v){S.size=v;refresh();});
+    btnRow($('sizes'),B.sizes.map(function(s){return [s[0],s[0]+' in \u2022 '+money(s[3]+DESIGN_FEE)];}),S.size,function(v){S.size=v;refresh();});
     btnRow($('finishes'),B.finishes,S.finish,function(v){S.finish=v;refresh();});
     btnRow($('orient'),[['portrait','Portrait (tall)'],['landscape','Landscape (wide)']],S.orient,function(v){S.orient=v;refresh();});
     var pl=$('plates');pl.innerHTML='';
