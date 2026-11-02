@@ -103,7 +103,7 @@ input[type=range]{width:100%}
     </div>
     <p class="note" id="qtyNote" style="display:none;color:#8a5a00"><b>The most we can price here is 25.</b> Need more? Leave it at 25 and put the number you need in the notes below. We'll send you a custom quote.</p>
     <div class="price" id="priceBox"></div>
-    <p class="note"><b>Quantity savings:</b> 10 or more save 10%, and 20 or more save 20%. <b>Free shipping on 20 or more.</b> The discount is applied to your total and shown on your payment link. Need more than 25? Order 25 and put the number you need in the notes below, and we'll send you a custom quote. Each multitool is made to order. Once your payment is received, please allow about 1 to 2 weeks. The pickup option is for local customers in Central Arkansas; we'll arrange the time with you.</p>
+    <p class="note"><b>Quantity savings:</b> 10 or more save 10%, and 20 or more save 20%. <b>Free shipping on 20 or more.</b> The discount is applied to your total and shown on your payment link. Need more than 25? Order 25 and put the number you need in the notes below, and we'll send you a custom quote. Each multitool is made to order. Once your payment is received, please allow about 1 to 2 weeks. If you choose shipping, we'll get your address when we send your payment link. The pickup option is for local customers in Central Arkansas; we'll arrange the time with you.</p>
   </div>
 
   <div class="panel">
@@ -114,8 +114,7 @@ input[type=range]{width:100%}
       <div><label for="cemail">Your email</label><input type="email" id="cemail" autocomplete="email"></div>
       <div><label for="cphone">Phone (optional)</label><input type="tel" id="cphone" autocomplete="tel"></div>
     </div>
-    <div id="addrBox"><label for="caddr">Ship to (street, city, state, ZIP)</label>
-    <textarea id="caddr" placeholder="123 Main St, Little Rock, AR 72201"></textarea></div>
+    
     <label for="cnotes">Anything else? (optional)</label>
     <textarea id="cnotes" placeholder="Example: This is a gift."></textarea>
     <div class="hp" aria-hidden="true"><label for="website">Leave this blank</label><input type="text" id="website" tabindex="-1" autocomplete="off"></div>
@@ -219,7 +218,6 @@ input[type=range]{width:100%}
       L.push(d.name+' font: '+FONTS[s.font][2]+'   size: '+$(d.sz).value+'%   position: '+(s.ox/d.ppi).toFixed(2)+' in right, '+(-s.oy/d.ppi).toFixed(2)+' in up from center');
     });
     L.push('');L.push('Name: '+$('cname').value);L.push('Email: '+$('cemail').value);L.push('Phone: '+$('cphone').value);
-    if(!pickup())L.push('Ship to: '+$('caddr').value);
     L.push('Notes: '+$('cnotes').value);
     return L.join('\n');
   }
@@ -231,9 +229,9 @@ input[type=range]{width:100%}
   function update(){
     $('qtyNote').style.display=(parseInt($('f_qty').value,10)||0)>MAXQ?'block':'none';
     $('backBox').style.display=hasBack()?'block':'none';
-    setTab(CUR);render();buildPrice();$('addrBox').style.display=pickup()?'none':'block';$('summary').value=summary();
+    setTab(CUR);render();buildPrice();$('summary').value=summary();
   }
-  ['t1','t2','t3','f_sz','u1','u2','u3','b_sz','f_qty','f_ship','cname','cemail','cphone','caddr','cnotes'].forEach(function(i){
+  ['t1','t2','t3','f_sz','u1','u2','u3','b_sz','f_qty','f_ship','cname','cemail','cphone','cnotes'].forEach(function(i){
     $(i).addEventListener('input',function(){if(i.charAt(0)==='u'||i==='b_sz')CUR='back';else if(i.charAt(0)==='t'||i==='f_sz')CUR='front';update();});
     $(i).addEventListener('change',update);});
   $('f_back').addEventListener('change',function(){CUR=this.checked?'back':'front';update();});
@@ -242,11 +240,11 @@ input[type=range]{width:100%}
   $('cH').onclick=function(){ctr('front',1,0);};$('cV').onclick=function(){ctr('front',0,1);};$('cB').onclick=function(){ctr('front',1,1);};
   $('bH').onclick=function(){ctr('back',1,0);};$('bV').onclick=function(){ctr('back',0,1);};$('bB').onclick=function(){ctr('back',1,1);};
   /* export */
-  function toBlob(svgStr,w,h,bg){return new Promise(function(res,rej){var im=new Image();im.onload=function(){var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');if(bg){x.fillStyle=bg;x.fillRect(0,0,w,h);}x.drawImage(im,0,0,w,h);c.toBlob(function(b){res(b);},'image/png');};im.onerror=rej;im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgStr);});}
+  function toBlob(svgStr,w,h,bg,type,q){return new Promise(function(res,rej){var im=new Image();im.onload=function(){var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');if(bg){x.fillStyle=bg;x.fillRect(0,0,w,h);}x.drawImage(im,0,0,w,h);c.toBlob(function(b){res(b);},type||'image/png',q);};im.onerror=rej;im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgStr);});}
   function previewBlob(k){
-    var d=SIDE[k],w=(d.W+48)*2,h=(d.H+48)*2;
+    var d=SIDE[k],w=Math.round((d.W+48)*1.5),h=Math.round((d.H+48)*1.5);
     var svg='<svg xmlns="'+NS+'" width="'+w+'" height="'+h+'" viewBox="-24 -24 '+(d.W+48)+' '+(d.H+48)+'"><style>'+$('fontcss').textContent+'</style>'+scene(k,false)+'</svg>';
-    return toBlob(svg,w,h,'#eef0f3');
+    return toBlob(svg,w,h,'#eef0f3','image/jpeg',0.88);
   }
   function artBlob(k){
     var d=SIDE[k],L=layout(k);clamp(k,L);var top=(d.bh-L.h)/2+ST[k].oy,cx=d.bw/2+ST[k].ox,W=2400,H=Math.round(W*d.bh/d.bw);
@@ -261,7 +259,6 @@ input[type=range]{width:100%}
     if(hasBack()&&!lines('back').length){setMsg('You chose back-side engraving, so please type the words for the back, or uncheck that option.','bad');CUR='back';update();$('u1').focus();return;}
     if(!name){setMsg('Please enter your name.','bad');$('cname').focus();return;}
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setMsg('Please enter a valid email so we can send your proof.','bad');$('cemail').focus();return;}
-    if(!pickup()&&!$('caddr').value.trim()){setMsg('Please enter the address to ship to, or choose local pickup.','bad');$('caddr').focus();return;}
     var btn=$('send');btn.disabled=true;setMsg('Sending...','');
     var jobs=[previewBlob('front'),artBlob('front')];if(hasBack()){jobs.push(previewBlob('back'));jobs.push(artBlob('back'));}
     Promise.all(jobs).then(function(r){
@@ -269,8 +266,8 @@ input[type=range]{width:100%}
       fd.append('name',name);fd.append('email',email);fd.append('_replyto',email);
       fd.append('_subject','Multitool request: '+lines('front')[0]+' (x'+qty()+')'+(hasBack()?' FRONT+BACK':'')+(pickup()?' PICKUP':''));fd.append('_captcha','false');fd.append('_template','box');
       fd.append('order_details',summary());
-      fd.append('multitool_front_preview',r[0],'multitool-front-preview.png');fd.append('engraving_art_front',r[1],'engraving-art-FRONT-black-on-white.png');
-      if(r[2]){fd.append('multitool_back_preview',r[2],'multitool-back-preview.png');fd.append('engraving_art_back',r[3],'engraving-art-BACK-black-on-white.png');}
+      fd.append('multitool_front_preview',r[0],'multitool-front-preview.jpg');fd.append('engraving_art_front',r[1],'engraving-art-FRONT-black-on-white.png');
+      if(r[2]){fd.append('multitool_back_preview',r[2],'multitool-back-preview.jpg');fd.append('engraving_art_back',r[3],'engraving-art-BACK-black-on-white.png');}
       return fetch('https://formsubmit.co/'+FORM_EMAIL,{method:'POST',mode:'no-cors',body:fd});
     }).then(function(){btn.disabled=false;setMsg('Sent! We will review your design and email you a proof to approve. Nothing is charged until you approve it. Once payment is received, please allow about 1 to 2 weeks.','ok');},
             function(){btn.disabled=false;setMsg('Sorry, that did not go through. Please try again, or email us at joseph@jfcreationsar.com.','bad');});
