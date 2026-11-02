@@ -259,7 +259,7 @@ input[type=range]{width:100%}
     if(hasBack()&&!lines('back').length){setMsg('You chose back-side engraving, so please type the words for the back, or uncheck that option.','bad');CUR='back';update();$('u1').focus();return;}
     if(!name){setMsg('Please enter your name.','bad');$('cname').focus();return;}
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setMsg('Please enter a valid email so we can send your proof.','bad');$('cemail').focus();return;}
-    var btn=$('send');btn.disabled=true;setMsg('Sending...','');
+    var btn=$('send');btn.disabled=true;setMsg('Sending your design... this can take up to 15 seconds. Please keep this page open.','');
     var jobs=[previewBlob('front'),artBlob('front')];if(hasBack()){jobs.push(previewBlob('back'));jobs.push(artBlob('back'));}
     Promise.all(jobs).then(function(r){
       var fd=new FormData();
