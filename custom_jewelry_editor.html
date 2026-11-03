@@ -360,7 +360,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     var g=$('prods');g.innerHTML='';
     PORDER.forEach(function(id){var p=PRODS[id],b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',S.prod===id?'true':'false');b.innerHTML=miniShape(id)+'<span>'+p.short+'</span><span style="font-weight:500;color:#5d6978">from '+money(p.price)+'</span>';
       b.onclick=function(){if(S.prod===id)return;S.prod=id;buildWords();refresh();};g.appendChild(b);});
-    $('specs').innerHTML='<b>'+P().name+'</b> ('+P().sku+')<br>'+P().info;
+    $('specs').innerHTML='<b>'+P().name+'</b><br>'+P().info;
   }
   function buildMetals(){
     var g=$('metals');g.innerHTML='';
@@ -392,9 +392,9 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     if(q>=10)h+='<p class="note" style="color:#1b6b3a;font-weight:600">Bulk pricing applies to 10 or more. We will confirm your discounted total with your proof.</p>';
     $('priceBox').innerHTML=h;
   }
-  function summary(){
+  function summary(forEmail){
     var p=P(),L=[],ic=ICONS.filter(function(i){return i[0]===S.icon;})[0][1],mt=METALS.filter(function(m){return m[0]===S.metal;})[0][1];
-    L.push('JEWELRY REQUEST');L.push('Piece: '+p.name+' ('+p.sku+')');L.push('Metal: '+mt);L.push('Engraving fill: '+(fi()||S.ink));
+    L.push('JEWELRY REQUEST');L.push('Piece: '+p.name+(forEmail?' ('+p.sku+')':''));L.push('Metal: '+mt);L.push('Engraving fill: '+(fi()||S.ink));
     L.push('Letter style: '+FT()[3]+($('f_caps').checked?', all capitals':', as typed'));
     if(!p.faces)L.push('Picture: '+ic+(S.icon==='upload'?' ('+(S.maskName||'no file yet')+')'+(handMode()?' - USED AS THE WHOLE ENGRAVING (handwriting)':''):''));
     areas().forEach(function(a){L.push(a.label+': '+(a.lines.filter(function(x){return x;}).join(' / ')||'(empty)'));});
@@ -461,7 +461,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
       var fd=new FormData();
       fd.append('name',name);fd.append('email',email);fd.append('_replyto',email);
       fd.append('_subject','Jewelry request: '+p.name+', '+METALS.filter(function(m){return m[0]===S.metal;})[0][1]);fd.append('_captcha','false');fd.append('_template','box');
-      fd.append('order_details',summary());fd.append('jewelry_preview',r[0],'jewelry-preview.png');
+      fd.append('order_details',summary(true));fd.append('jewelry_preview',r[0],'jewelry-preview.png');
       u.forEach(function(a,k){fd.append('art_'+a.id,r[1+k],'engraving-art-'+a.id+'-black-on-white.png');});
       strips.forEach(function(a,k){if(r[1+u.length+k])fd.append('preview_'+a.id,r[1+u.length+k],'preview-'+a.id+'.png');});
       if(uf)fd.append('customer_picture',uf,uf.name);

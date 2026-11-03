@@ -360,7 +360,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted);padd
     var w=$("sizes");w.innerHTML="";
     PRODUCTS.forEach(function(p){
       var b=document.createElement("button");b.type="button";b.className="sz";b.setAttribute("aria-pressed",p===P?"true":"false");
-      b.innerHTML='<img class="th" alt="" src="'+THUMBS[p.id]+'"><b>'+p.name+"</b><span>"+p.sub+'</span><i class="tag">$'+p.price+'</i>';
+      b.innerHTML='<img class="th" alt="" src="'+THUMBS[p.id]+'"><b>'+p.name+"</b><span>"+p.sub.replace(/^[A-Z0-9]+\s*(\u00b7\s*)?/,"")+'</span><i class="tag">$'+p.price+'</i>';
       b.onclick=function(){if(p===P)return;setProduct(p);buildDesigns();render();};
       w.appendChild(b);
     });
@@ -579,9 +579,9 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted);padd
     var sc=a.sc/100*FITD;
     g.setAttribute("transform","translate("+(CX+a.dx)+","+(CY+a.dy)+") scale("+sc+") translate("+(-CX)+","+(-CY)+")");
   }
-  function summaryText(){
+  function summaryText(forEmail){
     var q=priceParts();
-    var lines=["Custom engraved glassware order","Glass: "+P.name+" ("+P.sub+")"];
+    var lines=["Custom engraved glassware order","Glass: "+P.name+(forEmail?" ("+P.sub+")":(P.sub.replace(/^[A-Z0-9]+\s*(\u00b7\s*)?/,"")?" ("+P.sub.replace(/^[A-Z0-9]+\s*(\u00b7\s*)?/,"")+")":""))];
     if(P.handle)lines.push("Handle side: "+(FLIP?"Left":"Right")+" (as seen from the front)");
     if(MODE==="up"){
       lines.push("Design: Upload your own");
@@ -743,7 +743,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted);padd
       fd.append("name",name);fd.append("email",email);fd.append("_replyto",email);
       fd.append("_subject","Custom Glassware");fd.append("_captcha","false");fd.append("_template","box");
       fd.append("notes",$("cnotes").value.trim());
-      fd.append("order_details",$("summary").value);
+      fd.append("order_details",summaryText(true));
       fd.append("mockup",dataUrlToBlob(res[0]),"glass-mockup.png");
       fd.append("artwork",dataUrlToBlob(res[1]),"engraving-artwork.png");
       if(MODE==="up"&&U.logoFile)fd.append("logo",U.logoFile,U.logoFile.name);
