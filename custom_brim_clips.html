@@ -92,7 +92,8 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     <div class="dgrid" id="dgrid"></div>
     <div style="margin-top:16px;clear:both"><button type="button" class="btn" id="upBtn" style="background:#fff;color:var(--accent);border:1px solid var(--accent)">Upload your own picture or logo</button></div>
     <div class="fld" id="up_w" style="margin-top:10px"><label class="first" for="up_file">Your picture, logo or drawing</label><input type="file" id="up_file" accept=".jpg,.jpeg,.png,.webp,.svg">
-      <p class="note">A dark drawing on a light background works best. JPG, PNG or SVG, up to 4 MB. We clean it up and send a proof for your approval.</p></div>
+      <p class="note">A dark drawing on a light background works best. JPG, PNG or SVG, up to 4 MB. We clean it up and send a proof for your approval.</p>
+      <label for="up_sz" style="margin-top:8px">Picture size <span id="up_szv">100%</span></label><input type="range" id="up_sz" min="40" max="140" step="1" value="100" style="width:100%"></div>
     <label for="t_line">A short line of text (optional)</label><input type="text" id="t_line" maxlength="16" placeholder="DAD">
     <p class="note">Initials or a short name. Keep it short, the clip is small. With the frame (design 27), the text goes inside the frame.</p>
   </div>
@@ -120,7 +121,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     <label for="cnotes">Anything else? (optional)</label>
     <textarea id="cnotes" style="min-height:56px" placeholder="Example: This is a gift. Please ship it before Father's Day."></textarea>
     <div class="hp" aria-hidden="true"><label for="website">Leave this blank</label><input type="text" id="website" tabindex="-1" autocomplete="off"></div>
-    <div style="margin-top:12px"><button class="btn" id="send" type="button">Send my clip</button></div>
+    <div style="margin-top:12px"><button class="btn" id="send" type="button">Send my clip</button><button type="button" id="startOver" style="margin-left:8px;background:#fff;color:#1f3a5f;border:1px solid #9aa9bd;border-radius:8px;padding:11px 16px;font:inherit;font-weight:600;cursor:pointer">Start over</button><script>(function(){var b=document.getElementById('startOver'),t;b.addEventListener('click',function(){if(b.getAttribute('data-arm')){location.replace(location.href.split('#')[0]);return;}b.setAttribute('data-arm','1');b.textContent='Click again to clear everything';clearTimeout(t);t=setTimeout(function(){b.removeAttribute('data-arm');b.textContent='Start over';},4000);});})();</script></div>
     <p id="msg" role="status"></p>
     <details style="margin-top:8px"><summary class="note" style="cursor:pointer">See what will be sent</summary><textarea id="summary" readonly></textarea></details>
   </div>
@@ -142,7 +143,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
   var COLORS=[['silver','Silver','#c9ccd1'],['black','Black','#26272a'],['red','Red','#d9362c'],['gold','Gold','#dcc272'],['white','White','#f4f4f5'],['purple','Purple','#7b56b8']];
   var NAMES=['Mallard duck','Deer antlers','Rifle scope','Pine trees','Bass','Deer track','Compound bow','Rifle round','Mountains and sun','Golf','Cross','Hook and fish','Star','Anchor and rope','Paw and bone','Heart','Waving flag','Compass','Eagle','Dog tags','Nail cross','Bible and cross','Fish symbol','Turkey','Leaping bass','Lightning bolt','Frame','Dove','Baby feet','Flying mallard','Deer skull','Cat paw','Faith over fear','Fearfully and wonderfully made','I love Jesus','Jesus and Faith crosses','Not perfect, just forgiven','Rooted in Christ','Created with a purpose','Faith heart'];
   var DLIST=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40];
-  var S={color:'silver',ink:'black',design:13,mask:null,maskName:''};
+  var S={color:'silver',ink:'black',design:13,mask:null,maskName:'',upScale:1};
   var f={};['t_line','f_qty','f_need','f_ship','cname','cemail','cphone','cnotes'].forEach(function(i){f[i]=$(i);});
   var cv=document.createElement('canvas').getContext('2d');
   function W(str,size,weight){cv.font=weight+' '+size+'px EBG, Georgia, serif';return cv.measureText(str).width;}
@@ -175,7 +176,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
       return s+T(txt,cx,A.y+A.h/2+sz*0.33,sz,700,ink);
     }
     var ih=txt?A.h*0.76:A.h;
-    if(m.c)s+='<image href="'+tint(m.c,ink,m.k)+'" x="'+A.x+'" y="'+A.y+'" width="'+A.w+'" height="'+ih+'" preserveAspectRatio="xMidYMid meet"/>';
+    if(m.c){var us=(S.design==='up')?S.upScale:1,iw=A.w*us,ihh=ih*us;s+='<image href="'+tint(m.c,ink,m.k)+'" x="'+(cx-iw/2).toFixed(1)+'" y="'+(A.y+ih/2-ihh/2).toFixed(1)+'" width="'+iw.toFixed(1)+'" height="'+ihh.toFixed(1)+'" preserveAspectRatio="xMidYMid meet"/>';}
     else if(S.design==='up')s+='<rect x="'+(cx-A.w*0.3)+'" y="'+(A.y+A.h*0.15)+'" width="'+(A.w*0.6)+'" height="'+(ih*0.7)+'" rx="10" fill="none" stroke="'+ink+'" stroke-width="3" stroke-dasharray="10 8" opacity=".8"/>'+T('Your picture',cx,A.y+A.h*0.45,A.w*0.09,700,ink);
     if(txt){var tz=Math.min(A.h*0.17,Math.floor(A.w*0.9/(W(txt,100,700)/100)));s+=T(txt,cx,A.y+A.h-tz*0.12,tz,700,ink);}
     return s;
@@ -220,7 +221,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     var c=COLORS.filter(function(x){return x[0]===S.color;})[0][1],L=[];
     L.push('BRIM CLIP REQUEST');L.push('Clip color: '+c+' ('+money(PRICE)+' each)');L.push('Engraving color: '+S.ink);
     L.push('Design: '+(S.design==='up'?'Customer upload ('+(S.maskName||'no file yet')+')':S.design+' - '+NAMES[S.design-1]));
-    L.push('Text: '+(f.t_line.value.trim()||'none'));L.push('Quantity: '+(f.f_qty.value||1)+'   Needed by: '+(f.f_need.value||'not specified'));
+    if(S.design==='up')L.push('Picture size: '+Math.round(S.upScale*100)+'%');L.push('Text: '+(f.t_line.value.trim()||'none'));L.push('Quantity: '+(f.f_qty.value||1)+'   Needed by: '+(f.f_need.value||'not specified'));
     L.push('Delivery: '+(f.f_ship.value==='ship'?'Ship to customer (+$5.00)':'Local pickup'));L.push('');
     L.push('Customer: '+f.cname.value.trim()+' <'+f.cemail.value.trim()+'> '+f.cphone.value.trim());L.push('Notes: '+f.cnotes.value.trim());
     return L.join('\n');
@@ -229,6 +230,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
   function refresh(){buildColors();buildInks();buildDesigns();update();}
   Object.keys(f).forEach(function(k){f[k].addEventListener('input',update);f[k].addEventListener('change',update);});
 
+  $('up_sz').addEventListener('input',function(){S.upScale=(+this.value)/100;$('up_szv').textContent=this.value+'%';update();});
   $('up_file').addEventListener('change',function(){
     var file=this.files[0];S.mask=null;S.maskName='';
     if(!file){update();return;}

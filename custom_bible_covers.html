@@ -92,7 +92,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
   <div class="panel">
     <h2>2. Pick a picture for the center</h2>
     <div class="icons" id="icons"></div>
-    <label class="check"><input type="checkbox" id="f_ring" checked> Put it inside a circle</label>
+    <label class="check"><input type="checkbox" id="f_ring" checked> Put it inside a circle (uncheck for no circle)</label>
     <div class="fld" id="up_w" style="margin-top:10px"><label class="first" for="up_file">Your picture or logo</label><input type="file" id="up_file" accept=".jpg,.jpeg,.png,.webp,.svg">
       <p class="note">A dark drawing on a light background works best. JPG, PNG or SVG, up to 4 MB. We clean it up and send a proof for your approval.</p></div>
   </div>
@@ -144,7 +144,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     <label for="cnotes">Anything else? (optional)</label>
     <textarea id="cnotes" style="min-height:56px" placeholder="Example: This is a graduation gift. Please ship it before May 10."></textarea>
     <div class="hp" aria-hidden="true"><label for="website">Leave this blank</label><input type="text" id="website" tabindex="-1" autocomplete="off"></div>
-    <div style="margin-top:12px"><button class="btn" id="send" type="button">Send my cover</button></div>
+    <div style="margin-top:12px"><button class="btn" id="send" type="button">Send my cover</button><button type="button" id="startOver" style="margin-left:8px;background:#fff;color:#1f3a5f;border:1px solid #9aa9bd;border-radius:8px;padding:11px 16px;font:inherit;font-weight:600;cursor:pointer">Start over</button><script>(function(){var b=document.getElementById('startOver'),t;b.addEventListener('click',function(){if(b.getAttribute('data-arm')){location.replace(location.href.split('#')[0]);return;}b.setAttribute('data-arm','1');b.textContent='Click again to clear everything';clearTimeout(t);t=setTimeout(function(){b.removeAttribute('data-arm');b.textContent='Start over';},4000);});})();</script></div>
     <p id="msg" role="status"></p>
     <details style="margin-top:8px"><summary class="note" style="cursor:pointer">See what will be sent</summary><textarea id="summary" readonly></textarea></details>
   </div>
@@ -300,7 +300,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     var g=$('icons');g.innerHTML='';
     ICONS.forEach(function(i){var b=document.createElement('button');b.type='button';b.setAttribute('aria-pressed',S.icon===i[0]?'true':'false');
       var sv=(i[0]==='none')?'<svg viewBox="0 0 100 100"><line x1="20" y1="20" x2="80" y2="80" stroke="#8a93a0" stroke-width="7"/><line x1="80" y1="20" x2="20" y2="80" stroke="#8a93a0" stroke-width="7"/></svg>':(i[0]==='upload')?'<svg viewBox="0 0 100 100"><path d="M50 78 V30 M30 48 L50 28 L70 48" fill="none" stroke="#1f3a5f" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><line x1="22" y1="86" x2="78" y2="86" stroke="#1f3a5f" stroke-width="8" stroke-linecap="round"/></svg>':'<img alt="" src="data:image/png;base64,'+MASKS[i[0]]+'" style="width:34px;height:34px;object-fit:contain;filter:invert(1)">';
-      b.innerHTML=sv+'<span>'+i[1]+'</span>';b.onclick=function(){S.icon=i[0];if(i[0]!=='upload'&&i[0]!=='none')loadMask(i[0],refresh);refresh();};g.appendChild(b);});
+      b.innerHTML=sv+'<span>'+i[1]+'</span>';b.onclick=function(){S.icon=i[0];$('f_ring').checked=(i[0]!=='upload');if(i[0]!=='upload'&&i[0]!=='none')loadMask(i[0],refresh);refresh();};g.appendChild(b);});
     $('up_w').className='fld'+(S.icon==='upload'?' on':'');
   }
   function buildAligns(){
@@ -354,7 +354,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
       x.putImageData(d,0,0);
       var minx=w,miny=h,maxx=0,maxy=0,xx,yy;for(yy=0;yy<h;yy++)for(xx=0;xx<w;xx++)if(p[(yy*w+xx)*4+3]>40){if(xx<minx)minx=xx;if(xx>maxx)maxx=xx;if(yy<miny)miny=yy;if(yy>maxy)maxy=yy;}
       if(maxx>minx){var cw=maxx-minx+1,ch=maxy-miny+1,s2=Math.max(cw,ch),o=document.createElement('canvas');o.width=s2;o.height=s2;o.getContext('2d').drawImage(c,minx,miny,cw,ch,(s2-cw)/2,(s2-ch)/2,cw,ch);S.mask=o;}else S.mask=c;
-      S.maskName=file.name;S.icon='upload';URL.revokeObjectURL(url);refresh();
+      S.maskName=file.name;S.icon='upload';$('f_ring').checked=false;URL.revokeObjectURL(url);refresh();
     };
     img.onerror=function(){setMsg('We could not read that picture. Please try a JPG or PNG.','bad');};
     img.src=url;
