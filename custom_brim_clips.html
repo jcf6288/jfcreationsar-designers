@@ -238,7 +238,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
       var sc=Math.min(1,600/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*sc)),h=Math.max(1,Math.round(img.height*sc));
       var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(img,0,0,w,h);
       var d=x.getImageData(0,0,w,h),p=d.data,i;
-      for(i=0;i<p.length;i+=4){var lum=0.3*p[i]+0.59*p[i+1]+0.11*p[i+2],a=lum<100?255:lum>190?0:Math.round((190-lum)/90*255);p[i]=p[i+1]=p[i+2]=0;p[i+3]=a;}
+      var INV=(function(){function L(o){return 0.3*p[o]+0.59*p[o+1]+0.11*p[o+2];}var s=0,n=0,k;for(k=0;k<w;k++){s+=L(k*4)+L(((h-1)*w+k)*4);n+=2;}for(k=0;k<h;k++){s+=L(k*w*4)+L((k*w+w-1)*4);n+=2;}return s/n<90;})();for(i=0;i<p.length;i+=4){var lum=0.3*p[i]+0.59*p[i+1]+0.11*p[i+2];if(INV)lum=255-lum;var a=lum<100?255:lum>190?0:Math.round((190-lum)/90*255);p[i]=p[i+1]=p[i+2]=0;p[i+3]=a;}
       x.putImageData(d,0,0);
       var minx=w,miny=h,maxx=0,maxy=0,xx,yy;for(yy=0;yy<h;yy++)for(xx=0;xx<w;xx++)if(p[(yy*w+xx)*4+3]>40){if(xx<minx)minx=xx;if(xx>maxx)maxx=xx;if(yy<miny)miny=yy;if(yy>maxy)maxy=yy;}
       if(maxx>minx){var cw=maxx-minx+1,ch=maxy-miny+1,s2=Math.max(cw,ch),o=document.createElement('canvas');o.width=s2;o.height=s2;o.getContext('2d').drawImage(c,minx,miny,cw,ch,(s2-cw)/2,(s2-ch)/2,cw,ch);S.mask=o;}else S.mask=c;
