@@ -352,7 +352,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     function line(c,w,extra){return '<path d="'+pth(c)+'" fill="none" stroke="'+col+'" stroke-width="'+(w*mm).toFixed(2)+'"'+(extra||'')+op+'/>';}
     function dashed(c,w,L,per){var d=pth(c),P=measure(d).getTotalLength(),n=Math.max(8,Math.round(P/(per*mm))),p=P/n,l=Math.max(0.01,(L-w)*mm);return '<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="'+(w*mm).toFixed(2)+'" stroke-linecap="round" stroke-dasharray="'+l.toFixed(2)+' '+(p-l).toFixed(2)+'"'+op+'/>';}
     if(b==='line')return line(3.1,2.2);
-    if(b==='stitch')return dashed(3.0,1.7,4.2,6.8);
+    if(b==='stitch')return dashed(3.0,0.7,4.9,6.2);
     if(b==='dotted')return dashed(3.0,1.8,1.8,3.8);
     if(b==='double')return line(2.45,0.9)+line(4.45,0.9);
     if(b==='thickthin')return line(3.1,2.2)+line(5.9,0.8);
