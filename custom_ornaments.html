@@ -58,7 +58,7 @@ input[type=range]{width:100%}
 .adj .r span.k{width:112px;font-size:13px;font-weight:600}
 .adj .r input[type=range]{flex:1;min-width:0}
 .adj .r span.v{width:44px;text-align:right;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
-button.btn{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 14px;font:inherit;font-weight:600;cursor:pointer}
+button.btn{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 14px;font:inherit;font-weight:600;cursor:pointer}button#send.btn,button#sendBtn.btn{background:#38761d;font-size:16px;padding:13px 16px}button#send.btn:hover:not(:disabled),button#sendBtn.btn:hover:not(:disabled){background:#2f6217}
 button.btn:disabled{opacity:.6;cursor:default}
 button.btn.alt{background:#fff;color:var(--accent);border:1px solid var(--accent)}
 button.small{padding:6px 10px;font-size:13px}
@@ -74,11 +74,22 @@ button.small{padding:6px 10px;font-size:13px}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted);padding-top:2px}
 </style>
+<style id="holcss">
+.holiday{grid-column:1/-1;display:none;align-items:center;gap:14px;background:var(--hlbg,#eef3f9);border:1px solid var(--hl,#c9d7e8);border-radius:12px;padding:8px 16px 8px 10px;position:relative;overflow:hidden}
+.holiday.on{display:flex}
+.holiday svg{flex:0 0 auto;width:78px;height:78px;display:block}
+.holiday .ht{font-size:14px;line-height:1.45;min-width:0}
+.holiday .ht b{display:block;font-size:16px;color:var(--hlink,#1f3a5f);margin-bottom:2px}
+.holiday .deco{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:0;display:flex;gap:10px;opacity:.9}
+.holiday .deco svg{width:34px;height:34px}
+@media(max-width:560px){.holiday .deco{display:none}.holiday svg{width:64px;height:64px}}
+</style>
 </head>
 <body>
 <div class="wrap">
 
   <div class="banner"><b>Design it here. No payment needed right now.</b> Send us your mockup and we'll review it, then email you a secure payment link.</div>
+<!--hol--><div class="holiday" id="holiday" aria-live="polite"></div><!--/hol-->
   <div class="banner" style="background:#fff"><b>Crystal ornaments are frosted by UV laser.</b> An ultraviolet laser gives crystal an exceptionally smooth frosted look, unlike most other shops. <b>Leatherette ornaments</b> engrave in a gold or silver tone. Each ornament comes with its string, ready to hang.</div>
 
   <div class="stage">
@@ -765,5 +776,52 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted);padd
   Promise.all(need).then(function(){return document.fonts.ready;}).then(startOnce,startOnce);
 })();
 </script>
+<!--hol--><script>window.HOLMSG={"valentine": "A crystal or leather ornament engraved with your names and the year: a keepsake for two.", "easter": "A keepsake ornament for baby's first Easter or a new family tradition.", "july4": "Plan ahead: an ornament engraved with a name, a date or a flag for the Christmas tree.", "thanksgiving": "Start the season early: ornaments with the family name and year make a great host gift.", "christmas": "A personalized ornament with a name and the year is a keepsake they'll hang every Christmas."};
+(function(){
+  /* Themed banner for the next major holiday. Cosmetic only. ?holiday=off hides it. */
+  var box=document.getElementById('holiday');if(!box)return;
+  function easter(y){var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;return new Date(y,mo-1,da)}
+  function thanks(y){var d=new Date(y,10,1),add=(4-d.getDay()+7)%7;return new Date(y,10,1+add+21)}
+  function list(y){return [
+    {k:'valentine',d:new Date(y,1,14)},
+    {k:'easter',d:easter(y)},
+    {k:'july4',d:new Date(y,6,4)},
+    {k:'thanksgiving',d:thanks(y)},
+    {k:'christmas',d:new Date(y,11,25)}]}
+  var T={
+    valentine:{n:"Valentine's Day",c:['#fdeef2','#f3b9c8','#a3203f'],t:"Something personal for someone you love.",
+      art:'<svg viewBox="0 0 120 120"><g transform="translate(60 64)"><path d="M-44 -6 C-62 -24 -50 -40 -38 -32 C-34 -26 -36 -14 -30 -6Z" fill="#fff" stroke="#c9a6b0" stroke-width="2"/><path d="M44 -6 C62 -24 50 -40 38 -32 C34 -26 36 -14 30 -6Z" fill="#fff" stroke="#c9a6b0" stroke-width="2"/><path d="M0 40 C-52 4 -34 -36 -2 -14 C0 -12 0 -12 2 -14 C34 -36 52 4 0 40Z" fill="#e0334f" stroke="#9c1a33" stroke-width="3"/><ellipse cx="-12" cy="-2" rx="4.5" ry="6" fill="#fff"/><ellipse cx="12" cy="-2" rx="4.5" ry="6" fill="#fff"/><circle cx="-11" cy="0" r="3" fill="#2b1d12"/><circle cx="13" cy="0" r="3" fill="#2b1d12"/><path d="M-9 12 Q0 22 9 12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="-22" cy="10" r="5" fill="#ff8aa1" opacity=".8"/><circle cx="22" cy="10" r="5" fill="#ff8aa1" opacity=".8"/></g></svg>',
+      deco:'<svg viewBox="0 0 40 40"><path d="M20 35C4 22 7 8 18 13 19 14 20 15 20 15S21 14 22 13C33 8 36 22 20 35Z" fill="#e0334f"/></svg>'},
+    easter:{n:'Easter',c:['#f3f9ee','#c4dfb6','#3b7a2a'],t:"A personal touch for the basket or the table.",
+      art:'<svg viewBox="0 0 120 120"><ellipse cx="42" cy="34" rx="11" ry="30" fill="#fff" stroke="#b9b2c9" stroke-width="3" transform="rotate(-10 42 34)"/><ellipse cx="42" cy="36" rx="5" ry="22" fill="#ffb7c9" transform="rotate(-10 42 36)"/><ellipse cx="78" cy="34" rx="11" ry="30" fill="#fff" stroke="#b9b2c9" stroke-width="3" transform="rotate(10 78 34)"/><ellipse cx="78" cy="36" rx="5" ry="22" fill="#ffb7c9" transform="rotate(10 78 36)"/><ellipse cx="60" cy="74" rx="30" ry="27" fill="#fff" stroke="#b9b2c9" stroke-width="3"/><circle cx="50" cy="68" r="4" fill="#2b1d12"/><circle cx="70" cy="68" r="4" fill="#2b1d12"/><circle cx="51.5" cy="66.5" r="1.4" fill="#fff"/><circle cx="71.5" cy="66.5" r="1.4" fill="#fff"/><ellipse cx="60" cy="77" rx="4" ry="3" fill="#ff8aa1"/><path d="M60 80 L60 85 M54 87 Q60 92 66 87" fill="none" stroke="#7a6a8a" stroke-width="2.4" stroke-linecap="round"/><circle cx="41" cy="80" r="5" fill="#ffb7c9" opacity=".7"/><circle cx="79" cy="80" r="5" fill="#ffb7c9" opacity=".7"/><g transform="translate(96 100) rotate(14)"><ellipse rx="11" ry="14" fill="#8fd3c7" stroke="#4b9a8d" stroke-width="2"/><path d="M-10 -2 L-5 -6 L0 -2 L5 -6 L10 -2" fill="none" stroke="#fff" stroke-width="3"/></g></svg>',
+      deco:'<svg viewBox="0 0 40 40"><ellipse cx="20" cy="21" rx="11" ry="15" fill="#c7a6ea" stroke="#8f6bc0" stroke-width="2"/><path d="M10 20 L15 15 L20 20 L25 15 L30 20" fill="none" stroke="#fff" stroke-width="3"/></svg>'},
+    july4:{n:'the 4th of July',c:['#eef2fb','#b9c6e6','#1f3a8a'],t:"Something personal for the cookout crowd.",
+      art:'<svg viewBox="0 0 120 120"><g stroke-linecap="round"><path d="M60 8V22M60 98V112M8 60H22M98 60H112M23 23L33 33M87 87L97 97M97 23L87 33M33 87L23 97" stroke="#d9263c" stroke-width="5"/><path d="M60 2V8M60 112V118M2 60H8M112 60H118" stroke="#1f4fa0" stroke-width="4"/></g><path d="M60 24 L69 46 L93 48 L75 63 L81 87 L60 74 L39 87 L45 63 L27 48 L51 46Z" fill="#f6c220" stroke="#b78a00" stroke-width="3" stroke-linejoin="round"/><path d="M42 34 H78 L74 44 H46Z" fill="#1f4fa0" stroke="#14336b" stroke-width="2" stroke-linejoin="round" opacity="0"/><circle cx="52" cy="58" r="4" fill="#2b1d12"/><circle cx="68" cy="58" r="4" fill="#2b1d12"/><circle cx="53.5" cy="56.5" r="1.4" fill="#fff"/><circle cx="69.5" cy="56.5" r="1.4" fill="#fff"/><path d="M52 66 Q60 74 68 66" fill="none" stroke="#2b1d12" stroke-width="3" stroke-linecap="round"/><rect x="40" y="20" width="40" height="10" rx="2" fill="#1f4fa0" stroke="#14336b" stroke-width="2"/><rect x="46" y="9" width="28" height="13" rx="3" fill="#d9263c" stroke="#8f1424" stroke-width="2"/><path d="M46 15H74" stroke="#fff" stroke-width="3"/></svg>',
+      deco:'<svg viewBox="0 0 40 40"><path d="M20 4 L25 15 L37 16 L28 24 L31 36 L20 30 L9 36 L12 24 L3 16 L15 15Z" fill="#d9263c"/></svg>'},
+    thanksgiving:{n:'Thanksgiving',c:['#fdf3e6','#efcd9a','#9a4a0f'],t:"Something personal for the family at the table.",
+      art:'<svg viewBox="0 0 120 120"><g transform="translate(60 74)"><g id="tf"><ellipse cx="0" cy="-38" rx="10" ry="25" fill="#d9263c" transform="rotate(-72)"/><ellipse cx="0" cy="-38" rx="10" ry="25" fill="#f0821e" transform="rotate(-36)"/><ellipse cx="0" cy="-40" rx="10" ry="26" fill="#f6c220"/><ellipse cx="0" cy="-38" rx="10" ry="25" fill="#f0821e" transform="rotate(36)"/><ellipse cx="0" cy="-38" rx="10" ry="25" fill="#d9263c" transform="rotate(72)"/></g><ellipse cx="0" cy="8" rx="24" ry="26" fill="#8a5a2b" stroke="#5a3818" stroke-width="3"/><ellipse cx="0" cy="14" rx="14" ry="16" fill="#b98350"/><circle cx="0" cy="-12" r="15" fill="#8a5a2b" stroke="#5a3818" stroke-width="3"/><circle cx="-6" cy="-15" r="4.5" fill="#fff"/><circle cx="6" cy="-15" r="4.5" fill="#fff"/><circle cx="-5" cy="-14" r="2.2" fill="#2b1d12"/><circle cx="7" cy="-14" r="2.2" fill="#2b1d12"/><path d="M-4 -8 L4 -8 L0 0Z" fill="#f6a21e" stroke="#b86e00" stroke-width="1.5" stroke-linejoin="round"/><path d="M-3 0 Q0 9 3 0Z" fill="#d9263c"/><path d="M-13 -24 H13 L10 -34 H-10Z" fill="#2b1d12"/><rect x="-18" y="-26" width="36" height="4" rx="1" fill="#2b1d12"/><rect x="-10" y="-30" width="20" height="3" fill="#f6c220"/><path d="M-8 33 V42 M8 33 V42 M-12 42 H-4 M4 42 H12" stroke="#f0821e" stroke-width="3" stroke-linecap="round"/></g></svg>',
+      deco:'<svg viewBox="0 0 40 40"><path d="M20 4 C30 10 34 20 28 30 C24 36 20 37 20 37 C20 37 8 32 9 20 C10 12 14 8 20 4Z" fill="#e0731e"/><path d="M20 12V34" stroke="#8a3d0b" stroke-width="2"/></svg>'},
+    christmas:{n:'Christmas',c:['#eef7f1','#b5d6bf','#a31f2b'],t:"Something personal for the tree or the stocking.",
+      art:'<svg viewBox="0 0 120 120"><circle cx="60" cy="88" r="28" fill="#fff" stroke="#9fb3c8" stroke-width="3"/><circle cx="60" cy="48" r="20" fill="#fff" stroke="#9fb3c8" stroke-width="3"/><rect x="42" y="26" width="36" height="6" rx="2" fill="#2b1d12"/><rect x="48" y="8" width="24" height="20" rx="2" fill="#2b1d12"/><rect x="48" y="20" width="24" height="5" fill="#a31f2b"/><circle cx="52" cy="44" r="3" fill="#2b1d12"/><circle cx="68" cy="44" r="3" fill="#2b1d12"/><path d="M60 50 L78 54 L60 57Z" fill="#f0821e" stroke="#b8520b" stroke-width="1.5" stroke-linejoin="round"/><path d="M50 56 Q60 64 70 56" fill="none" stroke="#2b1d12" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="1 5"/><path d="M42 66 Q60 78 78 66 L78 74 Q60 86 42 74Z" fill="#a31f2b" stroke="#6e121b" stroke-width="2"/><path d="M70 74 L74 94 L84 92 L80 72Z" fill="#a31f2b" stroke="#6e121b" stroke-width="2" stroke-linejoin="round"/><circle cx="60" cy="92" r="3.2" fill="#2b1d12"/><circle cx="60" cy="104" r="3.2" fill="#2b1d12"/><path d="M33 80 L16 66 M16 66 L12 60 M16 66 L10 68 M87 80 L104 66 M104 66 L108 60 M104 66 L110 68" stroke="#6b4a2b" stroke-width="4" stroke-linecap="round" fill="none"/></svg>',
+      deco:'<svg viewBox="0 0 40 40"><path d="M20 3V37M5 11.5L35 28.5M35 11.5L5 28.5" stroke="#6aa6d6" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="20" r="3" fill="#6aa6d6"/></svg>'}
+  };
+  var q=(location.search.match(/[?&]holiday=([a-z0-9]+)/)||[])[1];
+  if(q==='off')return;
+  var pick=null,now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  if(q&&T[q]){pick={k:q,d:today,over:true}}
+  else{
+    var all=list(today.getFullYear()).concat(list(today.getFullYear()+1));
+    for(var i=0;i<all.length;i++){if(all[i].d>=today){pick=all[i];break}}
+  }
+  if(!pick)return;
+  var h=T[pick.k],days=Math.round((pick.d-today)/86400000);
+  var line=pick.over||days>0?h.n+' is coming up':(days===0?'Happy '+h.n+'!':h.n);
+  if(pick.over||days>0){line=h.n.charAt(0).toUpperCase()+h.n.slice(1)+' is coming up'}
+  if(days===0&&!pick.over)line='Happy '+h.n+'!';
+  box.style.setProperty('--hlbg',h.c[0]);box.style.setProperty('--hl',h.c[1]);box.style.setProperty('--hlink',h.c[2]);
+  box.innerHTML=h.art+'<div class="ht"><b>'+line+'</b>'+((window.HOLMSG&&window.HOLMSG[pick.k])||h.t)+'</div><div class="deco" aria-hidden="true">'+h.deco+h.deco+h.deco+'</div>';
+  box.className='holiday on';box.setAttribute('data-holiday',pick.k);
+})();
+</script><!--/hol-->
 </body>
 </html>
