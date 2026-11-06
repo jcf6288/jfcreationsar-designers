@@ -34,7 +34,7 @@ button{font:inherit;cursor:pointer}
 .tips p b{color:var(--greend)}
 .tips .fin{color:var(--muted);font-size:13px;margin:6px 0 0}
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.card{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;display:flex;flex-direction:column;cursor:pointer;transition:box-shadow .15s,transform .15s}.card:hover{box-shadow:0 6px 18px rgba(0,0,0,.14);transform:translateY(-2px)}.card .btn::after{content:'';position:absolute;top:0;right:0;bottom:0;left:0}
 .card img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#1f2f55}
 .cb{padding:11px 12px 13px;display:flex;flex-direction:column;gap:6px;flex:1}
 .cb h3{margin:0;font-size:16px;color:var(--accent);line-height:1.2}
@@ -243,7 +243,7 @@ function run(fromChip){
   if(!none){var tl='',sh=0;hits.concat(whos).forEach(function(x){var T=TIPS[x.l];if(T&&sh<3){sh++;tl+='<p><b>'+(x.l.charAt(0).toUpperCase()+x.l.slice(1))+':</b> '+T.join(' \u2022 ')+'</p>'}});
     if(tl)h+='<div class="tips"><h2>What you could put on it</h2>'+tl+'<p class="fin">Every design lets you type your own words, so these are just starting points. Your logo or your own picture can usually be added too.</p></div>'}
   h+='<div class="grid">';
-  ids.slice(0,LIM).forEach(function(p){var o=P[p],q=p==='sign';h+='<div class="card"><img src="'+IMG[o.t]+'" alt="'+o.n+'" loading="lazy" width="360" height="270"><div class="cb"><h3>'+o.n+'</h3><p>'+(idea[p]||o.d)+'</p><a class="btn" href="'+HREF(o.f)+'" target="_blank" rel="noopener">'+(q?'Request a quote':'Design it')+'</a></div></div>'});
+  ids.slice(0,LIM).forEach(function(p){var o=P[p],q=p==='sign';h+='<div class="card"><img src="'+IMG[o.t]+'" alt="'+o.n+'" loading="lazy" width="360" height="270"><div class="cb"><h3>'+o.n+'</h3><p>'+(idea[p]||o.d)+'</p><a class="btn" href="'+HREF(o.f)+'" target="_blank" rel="noopener">'+(q?'Request a quote':'Personalize it')+'</a></div></div>'});
   h+='</div>';
   if(ids.length>LIM)h+='<button class="showmore" id="sm" type="button">Show more ideas</button>';
   out.innerHTML=h;
