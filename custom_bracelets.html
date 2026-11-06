@@ -161,7 +161,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     {id:'gold',name:'Gold',price:27.99,ink:'#2b2008',note:'Gold-tone plate. The engraving comes out dark.'}
   ];
   var SW={silver:'linear-gradient(135deg,#e1e3e6,#b0b3b9)',black:'linear-gradient(135deg,#2c2d30,#101112)',gold:'linear-gradient(135deg,#e6c46e,#b88f3a)'};
-  var ICONS=[['none','None'],['star','Star'],['cross','Cross'],['anchor','Anchor'],['feet','Baby feet'],['heart','Heart'],['catp','Cat paw'],['paw','Dog paw'],['flag','Flag'],['compass','Compass'],['deer','Deer skull'],['duck','Mallard'],['dove','Dove'],['upload','Upload']];
+  var ICONS=[['none','None'],['star','Star'],['cross','Cross'],['medical','Medical'],['anchor','Anchor'],['feet','Baby feet'],['heart','Heart'],['catp','Cat paw'],['paw','Dog paw'],['flag','Flag'],['compass','Compass'],['deer','Deer skull'],['duck','Mallard'],['dove','Dove'],['upload','Upload']];
   var IDEAS=[
     {n:'Dad \u2022 Est. 2024',i:'none',m:'DAD \u2022 EST. 2024',s:''},
     {n:'Proud Dad',i:'star',m:'PROUD DAD',s:'Johnny Smith'},
@@ -170,7 +170,12 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     {n:'Sober Dad',i:'anchor',m:'SOBER DAD',s:'9.6.23'},
     {n:'Veteran',i:'flag',m:'US VETERAN',s:'Semper Fidelis'},
     {n:'In loving memory',i:'heart',m:'IN LOVING MEMORY',s:'Name 1950 - 2024'},
-    {n:'Pet memorial',i:'paw',m:'FOREVER LOVED',s:'Buddy'}
+    {n:'Pet memorial',i:'paw',m:'FOREVER LOVED',s:'Buddy'},
+    {n:'Type 1 diabetic',i:'medical',m:'TYPE 1 DIABETIC',s:'Insulin dependent'},
+    {n:'Peanut allergy',i:'medical',m:'PEANUT ALLERGY',s:'Carries EpiPen'},
+    {n:'Drug allergy',i:'medical',m:'ALLERGIC TO',s:'Penicillin'},
+    {n:'Epilepsy',i:'medical',m:'EPILEPSY',s:'Call 911'},
+    {n:'Blood thinner',i:'medical',m:'ON BLOOD THINNERS',s:'Call 911'}
   ];
   var S={mat:'silver',icon:'star',mask:null,maskName:''};
   var f={};['t_main','t_sub','b_l1','f_wrist','f_qty','f_need','f_ship','cname','cemail','cphone','cnotes'].forEach(function(i){f[i]=$(i);});
@@ -201,6 +206,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
   function iconShape(name,ink,dot){
     switch(name){
       case 'star':return '<polygon points="'+star5(50,54,50)+'" fill="'+ink+'"/>';
+      case 'medical':return '<g fill="'+ink+'"><rect x="42" y="2" width="16" height="96" rx="2"/><rect x="42" y="2" width="16" height="96" rx="2" transform="rotate(60 50 50)"/><rect x="42" y="2" width="16" height="96" rx="2" transform="rotate(120 50 50)"/></g><rect x="47.5" y="20" width="5" height="60" rx="2" fill="'+dot+'"/><path d="M50 30 C64 34 64 44 50 48 C36 52 36 62 50 66" fill="none" stroke="'+dot+'" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="22" r="4.5" fill="'+dot+'"/>';
       case 'cross':return '<rect x="40" y="4" width="20" height="92" rx="2" fill="'+ink+'"/><rect x="12" y="26" width="76" height="20" rx="2" fill="'+ink+'"/>';
       case 'anchor':return '<g fill="none" stroke="'+ink+'" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="15" r="8"/><line x1="50" y1="24" x2="50" y2="90"/><line x1="30" y1="38" x2="70" y2="38"/><path d="M16 60 Q20 90 50 90 Q80 90 84 60"/></g><polygon points="6,54 24,72 28,50" fill="'+ink+'"/><polygon points="94,54 76,72 72,50" fill="'+ink+'"/>';
       case 'feet':return foot(27,60,-10,1,ink)+foot(73,50,10,-1,ink);
