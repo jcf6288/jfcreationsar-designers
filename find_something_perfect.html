@@ -236,6 +236,7 @@ function run(fromChip){
   if(!typed&&!chips){out.innerHTML='';foot.style.display='none';return}
   if(!hits.length&&!whos.length){none=true;FALL.forEach(function(p,i){sc[p]=20-i;idea[p]=P[p].d})}
   var ids=Object.keys(sc).sort(function(a,b){return sc[b]-sc[a]||ORDER.indexOf(a)-ORDER.indexOf(b)});
+  ids=ids.concat(ORDER.filter(function(p){return !(p in sc)}));
   var h='';
   if(none){h+='<div class="note"><b>I don’t know that one yet,</b> but here are gifts people love. Anything can be personalized, so <a href="https://www.jfcreationsar.com/contact" target="_blank" rel="noopener" style="color:#38761D;font-weight:700">tell us what you have in mind</a> and we will help you design it.</div>'}
   else{var labels=whos.map(function(w){return w.l}).concat(hits.map(function(x){return x.l}));h+='<div class="found"><b>Ideas for:</b>'+labels.map(function(l){return '<span class="pill">'+l+'</span>'}).join('')+'</div>'}
