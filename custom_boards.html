@@ -803,30 +803,72 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted);padd
 })();
 </script><!--/hol-->
 <script>
-/* JFCreationsAR order sender: posts the order to our own Google Apps Script receiver (saves a backup, then emails the order). */
-window.jfSend=function(fd){
-  var obj={},files=[],jobs=[],used={},extra=[];
-  fd.forEach(function(v,k){
-    if(typeof v==='object'&&v&&typeof v.size==='number'){
-      jobs.push(new Promise(function(res,rej){
-        var r=new FileReader();
-        r.onload=function(){var n=v.name||k;if(used[n])n=k+'-'+n;used[n]=1;files.push({name:n,data:r.result});res();};
-        r.onerror=function(){rej(new Error('file read failed'));};
-        r.readAsDataURL(v);
-      }));
-    }else{obj[k]=v;}
+/* JFCreationsAR order sender + status box. Sends the order to our own Google Apps Script receiver (saves a backup copy, then emails the order). */
+(function(){
+  var URL="https://script.google.com/macros/s/AKfycby3z65HJOfb6Y3KSGtALhtWeEQjq9C1Fs1_KlnbWtT3EX-pBP9iGyDLA6ee4bvkqffBUQ/exec";
+  var active=false,box=null,state='',hideT=null;
+  function ensure(){
+    if(box)return box;
+    var st=document.createElement('style');
+    st.textContent='#jfStatus{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:2147483000;max-width:92vw;width:460px;box-sizing:border-box;padding:14px 40px 14px 16px;border-radius:12px;font:600 16px/1.35 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.28);display:none}'+
+    '#jfStatus.show{display:block}#jfStatus small{display:block;font-weight:400;font-size:14px;margin-top:3px}'+
+    '#jfStatus.sending{background:#ffd23f;color:#3a2e00;border:2px solid #d9a800;animation:jfPulse 1s ease-in-out infinite}'+
+    '#jfStatus.ok{background:#2e7d32;color:#fff;border:2px solid #1b5e20}'+
+    '#jfStatus.fail{background:#b3261e;color:#fff;border:2px solid #7f1a15}'+
+    '#jfStatus .jfx{position:absolute;right:10px;top:8px;background:none;border:0;color:inherit;font-size:22px;line-height:1;cursor:pointer;display:none}'+
+    '#jfStatus.ok .jfx,#jfStatus.fail .jfx{display:block}'+
+    '@keyframes jfPulse{0%,100%{opacity:1}50%{opacity:.55}}@media(prefers-reduced-motion:reduce){#jfStatus.sending{animation:none}}';
+    document.head.appendChild(st);
+    box=document.createElement('div');box.id='jfStatus';box.setAttribute('role','status');box.setAttribute('aria-live','polite');
+    box.innerHTML='<span class="jfm"></span><button type="button" class="jfx" aria-label="Close">&times;</button>';
+    box.querySelector('.jfx').onclick=function(){hide();};
+    document.body.appendChild(box);return box;
+  }
+  function hide(){if(box){box.className='';}state='';clearTimeout(hideT);}
+  function show(kind){
+    ensure();state=kind;clearTimeout(hideT);
+    var m=box.querySelector('.jfm');
+    if(kind==='sending')m.innerHTML='Sending your order...<small>Please keep this page open. This can take up to 30 seconds.</small>';
+    else if(kind==='ok')m.innerHTML='Sent! We got your order.<small>We will email you a secure payment link. Nothing is charged on this page.</small>';
+    else m.innerHTML='Not sent.<small>Please try again, or email us at joseph@jfcreationsar.com.</small>';
+    box.className='show '+kind;
+    if(kind==='ok')hideT=setTimeout(hide,60000);
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target&&e.target.closest&&e.target.closest('#send,#sendBtn');
+    if(!b)return;
+    /* our listener runs after the page's own handler: if it disabled the button, the order passed validation and is being sent */
+    if(b.disabled&&!active){
+      show('sending');
+      var n=0,iv=setInterval(function(){n++;if(active||state!=='sending'){clearInterval(iv);return;}
+        if(!b.disabled||n>40){clearInterval(iv);if(state==='sending')hide();}},250);
+    }
   });
-  return Promise.all(jobs).then(function(){
-    var known={name:1,email:1,phone:1,_replyto:1,_subject:1,_captcha:1,_template:1,order_details:1,website:1};
-    Object.keys(obj).forEach(function(k){if(!known[k]&&obj[k])extra.push(k+': '+obj[k]);});
-    var body={name:obj.name,email:obj.email,phone:obj.phone||'',subject:obj._subject||'New designer order',
-      order_details:String(obj.order_details||'')+(extra.length?'\n\n'+extra.join('\n'):''),website:'',files:files};
-    return fetch("https://script.google.com/macros/s/AKfycby3z65HJOfb6Y3KSGtALhtWeEQjq9C1Fs1_KlnbWtT3EX-pBP9iGyDLA6ee4bvkqffBUQ/exec",{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
-  }).then(function(r){return r.json();}).then(function(j){
-    if(!j||!j.ok)throw new Error((j&&j.error)||'send failed');
-    return j;
-  });
-};
+  window.jfSend=function(fd){
+    active=true;show('sending');
+    var obj={},files=[],jobs=[],used={},extra=[];
+    fd.forEach(function(v,k){
+      if(typeof v==='object'&&v&&typeof v.size==='number'){
+        jobs.push(new Promise(function(res,rej){
+          var r=new FileReader();
+          r.onload=function(){var n=v.name||k;if(used[n])n=k+'-'+n;used[n]=1;files.push({name:n,data:r.result});res();};
+          r.onerror=function(){rej(new Error('file read failed'));};
+          r.readAsDataURL(v);
+        }));
+      }else{obj[k]=v;}
+    });
+    return Promise.all(jobs).then(function(){
+      var known={name:1,email:1,phone:1,_replyto:1,_subject:1,_captcha:1,_template:1,order_details:1,website:1};
+      Object.keys(obj).forEach(function(k){if(!known[k]&&obj[k])extra.push(k+': '+obj[k]);});
+      var body={name:obj.name,email:obj.email,phone:obj.phone||'',subject:obj._subject||'New designer order',
+        order_details:String(obj.order_details||'')+(extra.length?'\n\n'+extra.join('\n'):''),website:'',files:files};
+      return fetch(URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
+    }).then(function(r){return r.json();}).then(function(j){
+      if(!j||!j.ok)throw new Error((j&&j.error)||'send failed');
+      active=false;show('ok');return j;
+    }).catch(function(e){active=false;show('fail');throw e;});
+  };
+})();
 </script>
 </body>
 </html>
