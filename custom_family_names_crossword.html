@@ -543,7 +543,8 @@ function previewOrn(L,g,bgRect){
   s+='</g></svg>';
   return {svg:s,w:vw,h:vh,geo:g};
 }
-function artOrn(L,g,mono){
+function artOrn(L,g,mono,part){
+  var pc=!part||part==='cut',ps=!part||part==='score',pe=!part||part==='engrave',AC='#00a000';
   var S=100,gap=40,top=34;
   var loops=cutLoops(L),segs=scoreSegs(L);
   var cutC=mono?'#000':'#ff0000',scC=mono?'#000':'#0000ff';
@@ -552,13 +553,15 @@ function artOrn(L,g,mono){
   var fam=$('family').value.trim(),yr=$('year').value.trim();
   var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+f(totalW)+' '+f(totalH)+'" width="'+f(totalW/S)+'in" height="'+f(totalH/S)+'in"><defs><style>'+FONTCSS+'</style></defs>';
   if(mono)s+='<rect width="100%" height="100%" fill="#fff"/>';
-  s+='<text x="0" y="22" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#000">WALNUT TOP - cut (crossword windows and bottom curve)</text>';
-  s+='<text x="'+(W2+gap)+'" y="22" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#000">MAPLE BASE - cut, score, engrave</text>';
-  s+='<g id="walnut-top" transform="translate(0,'+top+')"><path d="'+walnutOuter(g,S)+' '+win+'" fill="none" fill-rule="evenodd" stroke="'+cutC+'" stroke-width="1"/></g>';
+  var tl=pc?'WALNUT TOP - cut (crossword windows and bottom curve)':'',tr=part?('MAPLE BASE - '+part+(pc?'':' (green = alignment, do not burn)')):'MAPLE BASE - cut, score, engrave';
+  if(tl)s+='<text x="0" y="22" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="'+(part?AC:'#000')+'">'+tl+'</text>';
+  s+='<text x="'+(W2+gap)+'" y="22" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="'+(part?AC:'#000')+'">'+tr+'</text>';
+  if(pc)s+='<g id="walnut-top" transform="translate(0,'+top+')"><path d="'+walnutOuter(g,S)+' '+win+'" fill="none" fill-rule="evenodd" stroke="'+cutC+'" stroke-width="1"/></g>';
   s+='<g id="maple-base" transform="translate('+(W2+gap)+','+top+')">';
-  s+='<path id="base-cut" d="'+basePath(g,S)+'" fill="none" fill-rule="evenodd" stroke="'+cutC+'" stroke-width="1"/>';
-  s+='<path id="score" d="'+segsPath(segs,S,g.ox,g.oy,g.c)+'" fill="none" stroke="'+scC+'" stroke-width="1"'+(mono?' stroke-dasharray="5 4"':'')+'/>';
-  s+='<g id="engrave">'+tilesEngrave(L,g,S,'#000','#000',g.c>=0.28)+bandText(g,S,'#000',fam,yr)+'</g>';
+  if(pc)s+='<path id="base-cut" d="'+basePath(g,S)+'" fill="none" fill-rule="evenodd" stroke="'+cutC+'" stroke-width="1"/>';
+  if(part&&!pc)s+='<path id="alignment-circle" d="'+basePath(g,S)+'" fill="none" fill-rule="evenodd" stroke="'+AC+'" stroke-width="0.75"/>';
+  if(ps)s+='<path id="score" d="'+segsPath(segs,S,g.ox,g.oy,g.c)+'" fill="none" stroke="'+scC+'" stroke-width="1"'+(mono?' stroke-dasharray="5 4"':'')+'/>';
+  if(pe)s+='<g id="engrave">'+tilesEngrave(L,g,S,'#000','#000',g.c>=0.28)+bandText(g,S,'#000',fam,yr)+'</g>';
   s+='</g></svg>';
   return {svg:s,w:totalW,h:totalH};
 }
@@ -603,9 +606,10 @@ function previewSVG(L,pk,bgRect){
 }
 
 /* ---------- laser art ---------- */
-function artSVG(L,pk,mono){
+function artSVG(L,pk,mono,part){
   var g=geo(L,pk),S=100,gap=40,top=34;
-  if(g.orn)return artOrn(L,g,mono);
+  if(g.orn)return artOrn(L,g,mono,part);
+  var pc=!part||part==='cut',ps=!part||part==='score',pe=!part||part==='engrave',AC='#00a000';
   var loops=cutLoops(L),segs=scoreSegs(L);
   var cutC=mono?'#000':'#ff0000',scC=mono?'#000':'#0000ff',enC='#000';
   var W2=g.W*S,H2=g.H*S;
@@ -614,14 +618,14 @@ function artSVG(L,pk,mono){
   if(g.hole)bp+=' '+circPath(g.hole.x*S,g.hole.y*S,g.hole.r*S);
   var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+f(totalW)+' '+f(totalH)+'" width="'+f(g.W*2+gap/S)+'in" height="'+f((totalH)/S)+'in">';
   if(mono)s+='<rect width="100%" height="100%" fill="#fff"/>';
-  s+='<text x="0" y="22" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#000">WALNUT BACKER - cut ('+g.W.toFixed(2)+' x '+g.H.toFixed(2)+' in)</text>';
-  s+='<text x="'+(W2+gap)+'" y="22" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#000">MAPLE TOP - cut, score, engrave</text>';
-  s+='<g id="walnut-cut" transform="translate(0,'+top+')"><path d="'+bp+'" fill="none" fill-rule="evenodd" stroke="'+cutC+'" stroke-width="1"/></g>';
+  if(pc)s+='<text x="0" y="22" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="'+(part?AC:'#000')+'">WALNUT BACKER - cut ('+g.W.toFixed(2)+' x '+g.H.toFixed(2)+' in)</text>';
+  s+='<text x="'+(W2+gap)+'" y="22" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="'+(part?AC:'#000')+'">'+(part?'MAPLE TOP - '+part+(pc?'':' (green = alignment, do not burn)'):'MAPLE TOP - cut, score, engrave')+'</text>';
+  if(pc)s+='<g id="walnut-cut" transform="translate(0,'+top+')"><path d="'+bp+'" fill="none" fill-rule="evenodd" stroke="'+cutC+'" stroke-width="1"/></g>';
   s+='<g id="maple" transform="translate('+(W2+gap)+','+top+')">';
-  s+='<rect x="0" y="0" width="'+W2+'" height="'+H2+'" fill="none" stroke="'+(mono?'#999':'#ccc')+'" stroke-width="0.6" stroke-dasharray="4 4"/>';
-  s+='<path id="maple-cut" d="'+loopsPath(loops,S,g.ox,g.oy,g.c)+'" fill="none" stroke="'+cutC+'" stroke-width="1"/>';
-  s+='<path id="score" d="'+segsPath(segs,S,g.ox,g.oy,g.c)+'" fill="none" stroke="'+scC+'" stroke-width="1"'+(mono?' stroke-dasharray="5 4"':'')+'/>';
-  s+='<g id="engrave">'+lettersSVG(L,S,g.ox,g.oy,g.c,enC)+'</g>';
+  s+='<rect id="'+(part&&!pc?'alignment-outline':'maple-outline')+'" x="0" y="0" width="'+W2+'" height="'+H2+'" fill="none" stroke="'+(part?AC:(mono?'#999':'#ccc'))+'" stroke-width="'+(part?'0.75':'0.6')+'"'+(part?'':' stroke-dasharray="4 4"')+'/>';
+  if(pc)s+='<path id="maple-cut" d="'+loopsPath(loops,S,g.ox,g.oy,g.c)+'" fill="none" stroke="'+cutC+'" stroke-width="1"/>';
+  if(ps)s+='<path id="score" d="'+segsPath(segs,S,g.ox,g.oy,g.c)+'" fill="none" stroke="'+scC+'" stroke-width="1"'+(mono?' stroke-dasharray="5 4"':'')+'/>';
+  if(pe)s+='<g id="engrave">'+lettersSVG(L,S,g.ox,g.oy,g.c,enC)+'</g>';
   s+='</g></svg>';
   return {svg:s,w:totalW,h:totalH};
 }
@@ -720,7 +724,7 @@ $('orderForm').addEventListener('submit',function(ev){
   var btn=$('sendBtn');btn.disabled=true;btn.textContent='Sending...';
   var pv=previewSVG(state.layout,pk,true);
   var art=artSVG(state.layout,pk,true);
-  var lasr=artSVG(state.layout,pk,false);
+  var lcut=artSVG(state.layout,pk,false,'cut'),lscore=artSVG(state.layout,pk,false,'score'),lengr=artSVG(state.layout,pk,false,'engrave');
   Promise.all([
     svgToCanvas(pv.svg,pv.w,pv.h,1000,'#ede6da').then(function(cv){return canvasBlob(cv,'image/jpeg',0.82)}),
     svgToCanvas(art.svg,art.w,art.h,2400,'#ffffff').then(function(cv){return canvasBlob(cv,'image/png')})
@@ -743,7 +747,7 @@ $('orderForm').addEventListener('submit',function(ev){
     fd.append('Total',money(pr.total));
     fd.append('preview',blobs[0],'crossword-preview.jpg');
     fd.append('art',blobs[1],'crossword-art-black.png');
-    fd.append('laser_svg',new Blob([lasr.svg],{type:'image/svg+xml'}),'crossword-laser.svg');
+    fd.append('file_1_cut',new Blob([lcut.svg],{type:'image/svg+xml'}),'crossword-1-CUT.svg');fd.append('file_2_score',new Blob([lscore.svg],{type:'image/svg+xml'}),'crossword-2-SCORE.svg');fd.append('file_3_engrave',new Blob([lengr.svg],{type:'image/svg+xml'}),'crossword-3-ENGRAVE.svg');
     return window.jfSend(fd);
   }).then(function(){
     $('orderForm').style.display='none';
