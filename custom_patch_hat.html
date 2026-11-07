@@ -307,8 +307,9 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     if(hasP){
       var asp=mk.c.width/mk.c.height,ps=(+$('p_sz').value)/100,ph=pmax*ps,pw=ph*asp;
       if(pw>sf.w*ps){pw=sf.w*ps;ph=pw/asp;}
-      if(S.pic==='design'&&S.design===41&&!hasT&&S.shape==='rect'){var fb=S.border!=='none';pw=(fb?2.4:2.8)*PPI*ps;ph=(fb?1.4:1.8)*PPI*ps;} /* the flag fills the whole 3 x 2 patch */
-      P={w:pw,h:ph,mk:mk};
+      var fill=false,c0=0;
+      if(S.pic==='design'&&S.design===41&&!hasT){fill=true;var sh0=SHAPES[S.shape];c0=(S.border!=='none'?8.2:3)*PPI/25.4;pw=(sh0.w*PPI-2*c0)*ps;ph=(sh0.h*PPI-2*c0)*ps;} /* the flag fills the whole patch in any shape; the edge crops it */
+      P={w:pw,h:ph,mk:mk,fill:fill,c0:c0,meet:(fill&&S.shape==='rect'&&S.border!=='none')}; /* rectangle with a border: shrink so the whole flag shows */
     }
     var gh=(P?P.h:0)+(T?T.h:0)+(P&&T?gap:0),gw=Math.max(P?P.w:0,T?T.w:0);
     out.T=T;out.P=P;out.gh=gh;out.gw=gw;out.gap=gap;return out;
@@ -320,7 +321,9 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     var fill=mode==='art'?'#000':'url(#ink)';
     if(L.P){
       var u=mode==='art'?tint(L.P.mk.c,L.P.mk.k+'art',['#000','#000']):tint(L.P.mk.c,L.P.mk.k+m.id,m.ink);
-      s+='<image href="'+u+'" x="'+(cx-L.P.w/2).toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+L.P.w.toFixed(1)+'" height="'+L.P.h.toFixed(1)+'" preserveAspectRatio="none"'+(mode==='art'?'':' style="opacity:.94"')+'/>';
+      var fcl='';
+      if(L.P.fill){var shp=SHAPES[S.shape];s+='<clipPath id="flagclip"><path d="'+outlineD(S.shape,shp.w*PPI,shp.h*PPI,L.P.c0)+'"/></clipPath>';fcl=' clip-path="url(#flagclip)"';}
+      s+='<image href="'+u+'" x="'+(cx-L.P.w/2).toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+L.P.w.toFixed(1)+'" height="'+L.P.h.toFixed(1)+'" preserveAspectRatio="'+(L.P.fill?(L.P.meet?'xMidYMid meet':'xMidYMid slice'):'none')+'"'+fcl+(mode==='art'?'':' style="opacity:.94"')+'/>';
       y+=L.P.h+L.gap;
     }
     if(L.T){
@@ -411,7 +414,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
       s+='<rect x="'+(-pad)+'" y="'+(-pad)+'" width="'+(W+2*pad)+'" height="'+(H+2*pad)+'" fill="url(#bgp)"/>';
       s+='<g opacity=".35" filter="url(#sd)" transform="translate(6 14)"><image href="data:image/webp;base64,'+PATCH[S.shape+'_black']+'" x="0" y="0" width="'+W+'" height="'+H+'"/></g>';
       s+=patchGroup(L);
-      if(guide&&!(L.P&&S.pic==='design'&&S.design===41&&!L.hasT&&S.shape==='rect')){var sf=L.sf;s+='<rect x="'+(sf.cx-sf.w/2)+'" y="'+(sf.cy-sf.h/2)+'" width="'+sf.w+'" height="'+sf.h+'" fill="none" stroke="#7d8a9b" stroke-width="2" stroke-dasharray="8 6" opacity=".6"/>';}
+      if(guide&&!(L.P&&L.P.fill)){var sf=L.sf;s+='<rect x="'+(sf.cx-sf.w/2)+'" y="'+(sf.cy-sf.h/2)+'" width="'+sf.w+'" height="'+sf.h+'" fill="none" stroke="#7d8a9b" stroke-width="2" stroke-dasharray="8 6" opacity=".6"/>';}
       s+='<rect id="dz" x="'+(L.sf.cx+S.ox-L.gw/2-10)+'" y="'+(L.sf.cy-L.gh/2+S.oy-8)+'" width="'+(L.gw+20)+'" height="'+(L.gh+16)+'" fill="transparent" style="cursor:grab"/>';
       return s;
     }

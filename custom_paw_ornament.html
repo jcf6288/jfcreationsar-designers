@@ -392,7 +392,7 @@ function build(mode){
   }
   var ox2=-b[0],oy2=-b[1];
   if(mode==='art'){var A='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' '+h+'" width="'+(w/100)+'in" height="'+(h/100)+'in"><g transform="translate('+ox2+' '+oy2+')"><path d="'+mpPath(g.face)+'" fill="#000" fill-rule="evenodd"/></g></svg>';return {svg:A,w:w,h:h}}
-  if(mode==='score'){var gp=20,TW2=w*2+gp;return {svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+TW2+' '+h+'" width="'+(TW2/100)+'in" height="'+(h/100)+'in"><g transform="translate('+(ox2+w+gp)+' '+oy2+')" fill="none" stroke="#0000ff" stroke-width=".5"><path d="'+scorePath(g)+'"/></g><g transform="translate('+(ox2+w+gp)+' '+oy2+')" fill="none" stroke="#00b000" stroke-width=".5"><path d="'+mpPath(g.face)+'" fill-rule="evenodd"/></g></svg>',w:TW2,h:h}}
+  if(mode==='score'){var gp=20,TW2=w*2+gp;return {svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+TW2+' '+h+'" width="'+(TW2/100)+'in" height="'+(h/100)+'in"><g transform="translate('+(ox2+w+gp)+' '+oy2+')" fill="none" stroke="#0000ff" stroke-width=".5"><path d="'+scorePath(g)+'"/></g><g transform="translate('+(ox2+w+gp)+' '+oy2+')" fill="none" stroke="#00a000" stroke-width=".75"><path d="'+mpPath(g.face)+'" fill-rule="evenodd"/></g></svg>',w:TW2,h:h}}
   var gap=20,TW=w*2+gap,R='fill="none" stroke="#ff0000" stroke-width=".5"';
   var L='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+TW+' '+h+'" width="'+(TW/100)+'in" height="'+(h/100)+'in">';
   L+='<g transform="translate('+ox2+' '+oy2+')" '+R+'><path d="'+mpPath(g.back)+'" fill-rule="evenodd"/></g>';
@@ -445,8 +445,8 @@ $('orderForm').addEventListener('submit',function(ev){
     fd.append('Pet',g.o.cat?'Cat (with claws)':'Dog');fd.append('Pet name',nm);fd.append('Extras',extras());
     fd.append('Total',money(pr.total));
     fd.append('preview',b[0],'paw-ornament-preview.jpg');fd.append('art',b[1],'paw-ornament-cut-shape-black.png');
-    fd.append('laser_svg',new Blob([lasr.svg],{type:'image/svg+xml'}),'paw-ornament-layers.svg');
-    fd.append('score_svg',new Blob([build('score').svg],{type:'image/svg+xml'}),'paw-ornament-score-lines.svg');
+    fd.append('file_1_cut',new Blob([lasr.svg],{type:'image/svg+xml'}),'paw-1-CUT.svg');
+    fd.append('file_2_score',new Blob([build('score').svg],{type:'image/svg+xml'}),'paw-2-SCORE.svg');
     return window.jfSend(fd);
   }).then(function(){
     $('orderForm').style.display='none';var d=$('done');d.style.display='block';
