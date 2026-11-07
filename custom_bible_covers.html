@@ -47,7 +47,7 @@ input[type=file]{width:100%;font-size:13px}
 .price{margin-top:12px;border-top:1px solid var(--line);padding-top:10px;font-size:14px}
 .price .ln{display:flex;justify-content:space-between;margin:3px 0;color:var(--muted)}
 .price .tot{display:flex;justify-content:space-between;margin-top:6px;font-size:19px;font-weight:700}
-button.btn{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:11px 16px;font:inherit;font-weight:600;cursor:pointer}button#send.btn,button#sendBtn.btn{background:#38761d;font-size:16px;padding:13px 16px}button#send.btn:hover:not(:disabled),button#sendBtn.btn:hover:not(:disabled){background:#2f6217}
+button.btn{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:11px 16px;font:inherit;font-weight:600;cursor:pointer}
 button.btn:disabled{opacity:.6;cursor:default}
 #summary{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;min-height:150px;background:var(--bg)}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
@@ -66,25 +66,14 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
 .icons{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.icons button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 4px;font:inherit;font-size:12px;cursor:pointer;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:3px}.icons button svg{width:34px;height:34px}.icons button[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
 #warn{color:#a15c00;font-size:12.5px;margin:6px 0 0;min-height:0}
 </style>
-<style id="holcss">
-.holiday{grid-column:1/-1;display:none;align-items:center;gap:14px;background:var(--hlbg,#eef3f9);border:1px solid var(--hl,#c9d7e8);border-radius:12px;padding:8px 16px 8px 10px;position:relative;overflow:hidden}
-.holiday.on{display:flex}
-.holiday svg{flex:0 0 auto;width:78px;height:78px;display:block}
-.holiday .ht{font-size:14px;line-height:1.45;min-width:0}
-.holiday .ht b{display:block;font-size:16px;color:var(--hlink,#1f3a5f);margin-bottom:2px}
-.holiday .deco{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:0;display:flex;gap:10px;opacity:.9}
-.holiday .deco svg{width:34px;height:34px}
-@media(max-width:560px){.holiday .deco{display:none}.holiday svg{width:64px;height:64px}}
-</style>
 </head>
 <body>
 <div class="wrap">
-<div class="banner"><b>Design it here. No payment needed right now.</b> Pick your cover, add a name and a picture, and send it. We'll review it and send you a secure payment link, and we'll reach out first if we have a question. Every cover is laser engraved to order.</div>
-<!--hol--><div class="holiday" id="holiday" aria-live="polite"></div><!--/hol-->
+<div class="banner"><b>Design it here. No payment needed right now.</b> Pick your cover, add a name and a picture, and send it. We'll review it, email you a proof to approve, then send a secure payment link. Every cover is laser engraved to order.</div>
 
 <div class="stage">
   <svg id="pv" viewBox="240 10 1320 1780" role="img" aria-label="Bible cover preview"></svg>
-  <p class="hint">Preview only. Real engraving looks finer, and the engraving color varies a little with the vegan leather. The design goes on the front cover.</p>
+  <p class="hint">Preview only. Real engraving looks finer, and the engraving color varies a little with the leatherette. The design goes on the front cover.</p>
 </div>
 
 <div class="controls">
@@ -105,7 +94,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     <div class="icons" id="icons"></div>
     <label class="check"><input type="checkbox" id="f_ring" checked> Put it inside a circle (uncheck for no circle)</label>
     <div class="fld" id="up_w" style="margin-top:10px"><label class="first" for="up_file">Your picture or logo</label><input type="file" id="up_file" accept=".jpg,.jpeg,.png,.webp,.svg">
-      <p class="note">A dark drawing on a light background works best. JPG, PNG or SVG, up to 4 MB. We clean it up for you.</p></div>
+      <p class="note">A dark drawing on a light background works best. JPG, PNG or SVG, up to 4 MB. We clean it up and send a proof for your approval.</p></div>
   </div>
 
   <div class="panel">
@@ -141,7 +130,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     <label for="f_ship">Delivery</label>
     <select id="f_ship"><option value="ship">Ship it to me (+$5.00 flat shipping)</option><option value="pickup">Local pickup (Central Arkansas, arranged by email)</option></select>
     <div class="price" id="priceBox"></div>
-    <p class="note">Price is per cover, before tax. Shipping is a flat $5.00 per order. Ordering for a church group, a class, or a team? Bulk pricing is available for 10 or more. Tell us in the notes and we'll confirm the total with your payment link. A needed-by date is a request, not a guarantee.</p>
+    <p class="note">Price is per cover, before tax. Shipping is a flat $5.00 per order. Ordering for a church group, a class, or a team? Bulk pricing is available for 10 or more. Tell us in the notes and we'll confirm the total with your proof. A needed-by date is a request, not a guarantee.</p>
   </div>
 
   <div class="panel">
@@ -160,7 +149,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     <details style="margin-top:8px"><summary class="note" style="cursor:pointer">See what will be sent</summary><textarea id="summary" readonly></textarea></details>
   </div>
 </div>
-<footer>Preview only. Real engraving color varies slightly with the vegan leather. &middot; JFCreationsAR</footer>
+<footer>Preview only. Real engraving color varies slightly with the leatherette. &middot; JFCreationsAR</footer>
 </div>
 
 <script>
@@ -176,7 +165,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
   var COVERS=[
     {id:'297A',name:'Black / Gold',sku:'GFT297A',img:'black',ink:'#d3ad63',op:.93,note:'Black cover. The engraving comes out gold.',sw:'linear-gradient(135deg,#2a2523,#0e0c0b)',ring:'#d3ad63'},
     {id:'301',name:'Black / Silver',sku:'GFT301',img:'black',ink:'#c9ccd2',op:.93,note:'Black cover. The engraving comes out silver.',sw:'linear-gradient(135deg,#2a2523,#0e0c0b)'},
-    {id:'296',name:'Dark Brown',sku:'GFT296',img:'brown',ink:'#2a190f',op:.82,note:'Dark brown cover. The engraving comes out darker than the vegan leather.',sw:'linear-gradient(135deg,#a9754a,#7a4d2c)'}
+    {id:'296',name:'Dark Brown',sku:'GFT296',img:'brown',ink:'#2a190f',op:.82,note:'Dark brown cover. The engraving comes out darker than the leather.',sw:'linear-gradient(135deg,#a9754a,#7a4d2c)'}
   ];
   var QUADS={black:[[815,185],[1500,95],[1505,1390],[865,1635]],brown:[[835,160],[1500,60],[1505,1395],[850,1625]]};
   var SQUADS={black:[[630,340],[770,330],[845,1550],[705,1585]],brown:[[657,340],[797,340],[815,1550],[675,1555]]};
@@ -334,7 +323,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     if(q>1)h+='<div class="ln"><span>Per cover x '+q+'</span><span>'+money(unit()*q)+'</span></div>';
     h+='<div class="ln"><span>'+(ship?'Shipping (flat, per order)':'Local pickup')+'</span><span>'+(ship?'+'+money(ship):'$0.00')+'</span></div>';
     h+='<div class="tot"><span>Estimated total</span><span>'+money(unit()*q+ship)+'</span></div>';
-    if(q>=10)h+='<p class="note" style="color:#1b6b3a;font-weight:600">Bulk pricing applies to 10 or more. We will confirm your discounted total with your payment link.</p>';
+    if(q>=10)h+='<p class="note" style="color:#1b6b3a;font-weight:600">Bulk pricing applies to 10 or more. We will confirm your discounted total with your proof.</p>';
     $('priceBox').innerHTML=h;
   }
   function summary(){
@@ -395,7 +384,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     if(S.icon==='upload'&&!S.mask){setMsg('Please upload your picture, or choose a different picture.','bad');return;}
     if($('f_spine').checked&&!f.t_spine.value.trim()){setMsg('Please type the words for the strip, or untick that option.','bad');f.t_spine.focus();return;}
     if(!name){setMsg('Please enter your name.','bad');f.cname.focus();return;}
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setMsg('Please enter a valid email so we can reach you.','bad');f.cemail.focus();return;}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setMsg('Please enter a valid email so we can send your proof.','bad');f.cemail.focus();return;}
     var uf=S.icon==='upload'?$('up_file').files[0]:null;
     var btn=$('send');btn.disabled=true;setMsg('Sending...','');
     var jobs=[previewBlob(),artBlob()];if(spineOn())jobs.push(spineBlob());
@@ -406,8 +395,8 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
       fd.append('order_details',summary());fd.append('cover_preview',r[0],'cover-preview.png');fd.append('engraving_art',r[1],'engraving-art-black-on-white.png');
       if(r[2])fd.append('engraving_art_spine',r[2],'engraving-art-spine-black-on-white.png');
       if(uf)fd.append('customer_picture',uf,uf.name);
-      return fetch('https://formsubmit.co/'+FORM_EMAIL,{method:'POST',mode:'no-cors',body:fd});
-    }).then(function(){btn.disabled=false;setMsg('Sent! We will review your cover and email you a secure payment link. We will reach out first if we have a question. Nothing is charged on this page.','ok');},
+      return window.jfSend(fd);
+    }).then(function(){btn.disabled=false;setMsg('Sent! We will review your cover and email you a proof to approve. Nothing is charged until you approve it.','ok');},
             function(){btn.disabled=false;setMsg('Sorry, that did not go through. Please try again, or email us at joseph@jfcreationsar.com.','bad');});
   });
 
@@ -418,52 +407,31 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
   ['cross','bible','fish'].forEach(function(n){loadMask(n,function(){});});
 })();
 </script>
-<!--hol--><script>window.HOLMSG={"valentine": "A Bible cover engraved with a name is a thoughtful Valentine for someone who loves the Word.", "easter": "An Easter gift that lasts: a Bible cover with a name and a verse about new life.", "july4": "Give a Bible cover with a name to a new believer, a baptism or a graduate.", "thanksgiving": "Give thanks with a Bible cover engraved with a name and a favorite verse.", "christmas": "The gift of the Word: a Bible cover engraved with a name for Christmas."};
-(function(){
-  /* Themed banner for the next major holiday. Cosmetic only. ?holiday=off hides it. */
-  var box=document.getElementById('holiday');if(!box)return;
-  function easter(y){var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;return new Date(y,mo-1,da)}
-  function thanks(y){var d=new Date(y,10,1),add=(4-d.getDay()+7)%7;return new Date(y,10,1+add+21)}
-  function list(y){return [
-    {k:'valentine',d:new Date(y,1,14)},
-    {k:'easter',d:easter(y)},
-    {k:'july4',d:new Date(y,6,4)},
-    {k:'thanksgiving',d:thanks(y)},
-    {k:'christmas',d:new Date(y,11,25)}]}
-  var T={
-    valentine:{n:"Valentine's Day",c:['#fdeef2','#f3b9c8','#a3203f'],t:"Something personal for someone you love.",
-      art:'<svg viewBox="0 0 120 120"><g transform="translate(60 64)"><path d="M-44 -6 C-62 -24 -50 -40 -38 -32 C-34 -26 -36 -14 -30 -6Z" fill="#fff" stroke="#c9a6b0" stroke-width="2"/><path d="M44 -6 C62 -24 50 -40 38 -32 C34 -26 36 -14 30 -6Z" fill="#fff" stroke="#c9a6b0" stroke-width="2"/><path d="M0 40 C-52 4 -34 -36 -2 -14 C0 -12 0 -12 2 -14 C34 -36 52 4 0 40Z" fill="#e0334f" stroke="#9c1a33" stroke-width="3"/><ellipse cx="-12" cy="-2" rx="4.5" ry="6" fill="#fff"/><ellipse cx="12" cy="-2" rx="4.5" ry="6" fill="#fff"/><circle cx="-11" cy="0" r="3" fill="#2b1d12"/><circle cx="13" cy="0" r="3" fill="#2b1d12"/><path d="M-9 12 Q0 22 9 12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="-22" cy="10" r="5" fill="#ff8aa1" opacity=".8"/><circle cx="22" cy="10" r="5" fill="#ff8aa1" opacity=".8"/></g></svg>',
-      deco:'<svg viewBox="0 0 40 40"><path d="M20 35C4 22 7 8 18 13 19 14 20 15 20 15S21 14 22 13C33 8 36 22 20 35Z" fill="#e0334f"/></svg>'},
-    easter:{n:'Easter',c:['#f3f9ee','#c4dfb6','#3b7a2a'],t:"A personal touch for the basket or the table.",
-      art:'<svg viewBox="0 0 120 120"><ellipse cx="42" cy="34" rx="11" ry="30" fill="#fff" stroke="#b9b2c9" stroke-width="3" transform="rotate(-10 42 34)"/><ellipse cx="42" cy="36" rx="5" ry="22" fill="#ffb7c9" transform="rotate(-10 42 36)"/><ellipse cx="78" cy="34" rx="11" ry="30" fill="#fff" stroke="#b9b2c9" stroke-width="3" transform="rotate(10 78 34)"/><ellipse cx="78" cy="36" rx="5" ry="22" fill="#ffb7c9" transform="rotate(10 78 36)"/><ellipse cx="60" cy="74" rx="30" ry="27" fill="#fff" stroke="#b9b2c9" stroke-width="3"/><circle cx="50" cy="68" r="4" fill="#2b1d12"/><circle cx="70" cy="68" r="4" fill="#2b1d12"/><circle cx="51.5" cy="66.5" r="1.4" fill="#fff"/><circle cx="71.5" cy="66.5" r="1.4" fill="#fff"/><ellipse cx="60" cy="77" rx="4" ry="3" fill="#ff8aa1"/><path d="M60 80 L60 85 M54 87 Q60 92 66 87" fill="none" stroke="#7a6a8a" stroke-width="2.4" stroke-linecap="round"/><circle cx="41" cy="80" r="5" fill="#ffb7c9" opacity=".7"/><circle cx="79" cy="80" r="5" fill="#ffb7c9" opacity=".7"/><g transform="translate(96 100) rotate(14)"><ellipse rx="11" ry="14" fill="#8fd3c7" stroke="#4b9a8d" stroke-width="2"/><path d="M-10 -2 L-5 -6 L0 -2 L5 -6 L10 -2" fill="none" stroke="#fff" stroke-width="3"/></g></svg>',
-      deco:'<svg viewBox="0 0 40 40"><ellipse cx="20" cy="21" rx="11" ry="15" fill="#c7a6ea" stroke="#8f6bc0" stroke-width="2"/><path d="M10 20 L15 15 L20 20 L25 15 L30 20" fill="none" stroke="#fff" stroke-width="3"/></svg>'},
-    july4:{n:'the 4th of July',c:['#eef2fb','#b9c6e6','#1f3a8a'],t:"Something personal for the cookout crowd.",
-      art:'<svg viewBox="0 0 120 120"><g stroke-linecap="round"><path d="M60 8V22M60 98V112M8 60H22M98 60H112M23 23L33 33M87 87L97 97M97 23L87 33M33 87L23 97" stroke="#d9263c" stroke-width="5"/><path d="M60 2V8M60 112V118M2 60H8M112 60H118" stroke="#1f4fa0" stroke-width="4"/></g><path d="M60 24 L69 46 L93 48 L75 63 L81 87 L60 74 L39 87 L45 63 L27 48 L51 46Z" fill="#f6c220" stroke="#b78a00" stroke-width="3" stroke-linejoin="round"/><path d="M42 34 H78 L74 44 H46Z" fill="#1f4fa0" stroke="#14336b" stroke-width="2" stroke-linejoin="round" opacity="0"/><circle cx="52" cy="58" r="4" fill="#2b1d12"/><circle cx="68" cy="58" r="4" fill="#2b1d12"/><circle cx="53.5" cy="56.5" r="1.4" fill="#fff"/><circle cx="69.5" cy="56.5" r="1.4" fill="#fff"/><path d="M52 66 Q60 74 68 66" fill="none" stroke="#2b1d12" stroke-width="3" stroke-linecap="round"/><rect x="40" y="20" width="40" height="10" rx="2" fill="#1f4fa0" stroke="#14336b" stroke-width="2"/><rect x="46" y="9" width="28" height="13" rx="3" fill="#d9263c" stroke="#8f1424" stroke-width="2"/><path d="M46 15H74" stroke="#fff" stroke-width="3"/></svg>',
-      deco:'<svg viewBox="0 0 40 40"><path d="M20 4 L25 15 L37 16 L28 24 L31 36 L20 30 L9 36 L12 24 L3 16 L15 15Z" fill="#d9263c"/></svg>'},
-    thanksgiving:{n:'Thanksgiving',c:['#fdf3e6','#efcd9a','#9a4a0f'],t:"Something personal for the family at the table.",
-      art:'<svg viewBox="0 0 120 120"><g transform="translate(60 74)"><g id="tf"><ellipse cx="0" cy="-38" rx="10" ry="25" fill="#d9263c" transform="rotate(-72)"/><ellipse cx="0" cy="-38" rx="10" ry="25" fill="#f0821e" transform="rotate(-36)"/><ellipse cx="0" cy="-40" rx="10" ry="26" fill="#f6c220"/><ellipse cx="0" cy="-38" rx="10" ry="25" fill="#f0821e" transform="rotate(36)"/><ellipse cx="0" cy="-38" rx="10" ry="25" fill="#d9263c" transform="rotate(72)"/></g><ellipse cx="0" cy="8" rx="24" ry="26" fill="#8a5a2b" stroke="#5a3818" stroke-width="3"/><ellipse cx="0" cy="14" rx="14" ry="16" fill="#b98350"/><circle cx="0" cy="-12" r="15" fill="#8a5a2b" stroke="#5a3818" stroke-width="3"/><circle cx="-6" cy="-15" r="4.5" fill="#fff"/><circle cx="6" cy="-15" r="4.5" fill="#fff"/><circle cx="-5" cy="-14" r="2.2" fill="#2b1d12"/><circle cx="7" cy="-14" r="2.2" fill="#2b1d12"/><path d="M-4 -8 L4 -8 L0 0Z" fill="#f6a21e" stroke="#b86e00" stroke-width="1.5" stroke-linejoin="round"/><path d="M-3 0 Q0 9 3 0Z" fill="#d9263c"/><path d="M-13 -24 H13 L10 -34 H-10Z" fill="#2b1d12"/><rect x="-18" y="-26" width="36" height="4" rx="1" fill="#2b1d12"/><rect x="-10" y="-30" width="20" height="3" fill="#f6c220"/><path d="M-8 33 V42 M8 33 V42 M-12 42 H-4 M4 42 H12" stroke="#f0821e" stroke-width="3" stroke-linecap="round"/></g></svg>',
-      deco:'<svg viewBox="0 0 40 40"><path d="M20 4 C30 10 34 20 28 30 C24 36 20 37 20 37 C20 37 8 32 9 20 C10 12 14 8 20 4Z" fill="#e0731e"/><path d="M20 12V34" stroke="#8a3d0b" stroke-width="2"/></svg>'},
-    christmas:{n:'Christmas',c:['#eef7f1','#b5d6bf','#a31f2b'],t:"Something personal for the tree or the stocking.",
-      art:'<svg viewBox="0 0 120 120"><circle cx="60" cy="88" r="28" fill="#fff" stroke="#9fb3c8" stroke-width="3"/><circle cx="60" cy="48" r="20" fill="#fff" stroke="#9fb3c8" stroke-width="3"/><rect x="42" y="26" width="36" height="6" rx="2" fill="#2b1d12"/><rect x="48" y="8" width="24" height="20" rx="2" fill="#2b1d12"/><rect x="48" y="20" width="24" height="5" fill="#a31f2b"/><circle cx="52" cy="44" r="3" fill="#2b1d12"/><circle cx="68" cy="44" r="3" fill="#2b1d12"/><path d="M60 50 L78 54 L60 57Z" fill="#f0821e" stroke="#b8520b" stroke-width="1.5" stroke-linejoin="round"/><path d="M50 56 Q60 64 70 56" fill="none" stroke="#2b1d12" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="1 5"/><path d="M42 66 Q60 78 78 66 L78 74 Q60 86 42 74Z" fill="#a31f2b" stroke="#6e121b" stroke-width="2"/><path d="M70 74 L74 94 L84 92 L80 72Z" fill="#a31f2b" stroke="#6e121b" stroke-width="2" stroke-linejoin="round"/><circle cx="60" cy="92" r="3.2" fill="#2b1d12"/><circle cx="60" cy="104" r="3.2" fill="#2b1d12"/><path d="M33 80 L16 66 M16 66 L12 60 M16 66 L10 68 M87 80 L104 66 M104 66 L108 60 M104 66 L110 68" stroke="#6b4a2b" stroke-width="4" stroke-linecap="round" fill="none"/></svg>',
-      deco:'<svg viewBox="0 0 40 40"><path d="M20 3V37M5 11.5L35 28.5M35 11.5L5 28.5" stroke="#6aa6d6" stroke-width="3" stroke-linecap="round"/><circle cx="20" cy="20" r="3" fill="#6aa6d6"/></svg>'}
-  };
-  var q=(location.search.match(/[?&]holiday=([a-z0-9]+)/)||[])[1];
-  if(q==='off')return;
-  var pick=null,now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
-  if(q&&T[q]){pick={k:q,d:today,over:true}}
-  else{
-    var all=list(today.getFullYear()).concat(list(today.getFullYear()+1));
-    for(var i=0;i<all.length;i++){if(all[i].d>=today){pick=all[i];break}}
-  }
-  if(!pick)return;
-  var h=T[pick.k],days=Math.round((pick.d-today)/86400000);
-  var line=pick.over||days>0?h.n+' is coming up':(days===0?'Happy '+h.n+'!':h.n);
-  if(pick.over||days>0){line=h.n.charAt(0).toUpperCase()+h.n.slice(1)+' is coming up'}
-  if(days===0&&!pick.over)line='Happy '+h.n+'!';
-  box.style.setProperty('--hlbg',h.c[0]);box.style.setProperty('--hl',h.c[1]);box.style.setProperty('--hlink',h.c[2]);
-  box.innerHTML=h.art+'<div class="ht"><b>'+line+'</b>'+((window.HOLMSG&&window.HOLMSG[pick.k])||h.t)+'</div><div class="deco" aria-hidden="true">'+h.deco+h.deco+h.deco+'</div>';
-  box.className='holiday on';box.setAttribute('data-holiday',pick.k);
-})();
-</script><!--/hol-->
+<script>
+/* JFCreationsAR order sender: posts the order to our own Google Apps Script receiver (saves a backup, then emails the order). */
+window.jfSend=function(fd){
+  var obj={},files=[],jobs=[],used={},extra=[];
+  fd.forEach(function(v,k){
+    if(typeof v==='object'&&v&&typeof v.size==='number'){
+      jobs.push(new Promise(function(res,rej){
+        var r=new FileReader();
+        r.onload=function(){var n=v.name||k;if(used[n])n=k+'-'+n;used[n]=1;files.push({name:n,data:r.result});res();};
+        r.onerror=function(){rej(new Error('file read failed'));};
+        r.readAsDataURL(v);
+      }));
+    }else{obj[k]=v;}
+  });
+  return Promise.all(jobs).then(function(){
+    var known={name:1,email:1,phone:1,_replyto:1,_subject:1,_captcha:1,_template:1,order_details:1,website:1};
+    Object.keys(obj).forEach(function(k){if(!known[k]&&obj[k])extra.push(k+': '+obj[k]);});
+    var body={name:obj.name,email:obj.email,phone:obj.phone||'',subject:obj._subject||'New designer order',
+      order_details:String(obj.order_details||'')+(extra.length?'\n\n'+extra.join('\n'):''),website:'',files:files};
+    return fetch("https://script.google.com/macros/s/AKfycby3z65HJOfb6Y3KSGtALhtWeEQjq9C1Fs1_KlnbWtT3EX-pBP9iGyDLA6ee4bvkqffBUQ/exec",{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)});
+  }).then(function(r){return r.json();}).then(function(j){
+    if(!j||!j.ok)throw new Error((j&&j.error)||'send failed');
+    return j;
+  });
+};
+</script>
 </body>
 </html>
