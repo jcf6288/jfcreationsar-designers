@@ -44,6 +44,9 @@ button{font:inherit;cursor:pointer}
 .showmore{display:block;margin:16px auto 0;background:#fff;border:2px solid var(--accent);color:var(--accent);border-radius:12px;padding:11px 20px;font-weight:700}
 .foot{margin-top:22px;padding:14px;border-radius:14px;background:#eef3f9;border:1px solid #c9d7e8;font-size:15px}
 .foot a{color:var(--green);font-weight:700}
+.mats{display:flex;flex-wrap:wrap;gap:5px}
+.mat.o{background:#eef0f2;border:1px solid #d3d8dc;color:#3d4a55}
+.chip.on{background:var(--green);border-color:var(--green);color:#fff}
 .mat{align-self:flex-start;font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;line-height:1.5}
 .mat.g{background:#e3f0da;border:1px solid #b9d6a6;color:#274E13}
 .mat.v{background:#f3ece0;border:1px solid #e0d2b8;color:#6b5a3e}
@@ -59,7 +62,7 @@ button{font:inherit;cursor:pointer}
   <div class="grp"><h2>Who is it for?</h2><div class="chips" id="c_who"></div></div>
   <div class="grp"><h2>What do they love?</h2><div class="chips" id="c_love"></div><button class="more" id="m_love" type="button">Show more interests</button></div>
   <div class="grp"><h2>Any occasion?</h2><div class="chips" id="c_occ"></div></div>
-  <div class="grp"><h2>Material</h2><div class="chips"><button type="button" class="chip lth" id="c_gen" aria-pressed="false">Genuine leather only</button></div><p class="hint">Real leather gifts come first. Items made of vegan leather are hidden. You can also type “genuine leather”.</p></div>
+  <div class="grp"><h2>Material</h2><div class="chips"><button type="button" class="chip lth" id="c_gen" aria-pressed="false">Genuine leather only</button></div><div class="chips" id="c_mat" style="margin-top:7px"></div><p class="hint">Pick a material to see only those items. “Genuine leather only” puts real leather first and hides vegan leather. You can also just type a material, like “stainless steel” or “wood”.</p></div>
 </div>
 <div id="out" aria-live="polite"></div>
 <div class="foot" id="foot" style="display:none"></div>
@@ -238,7 +241,15 @@ var LK={"a son":["son"],"a daughter":["daughter"],"a husband or boyfriend":["hus
 var GEN=false;
 var GIDS=['glwallet','gltoil','glkey','gllug','glpass'];
 var VEGX={};Object.keys(P).forEach(function(k){if(P[k].m==='v'||P[k].m==='p'||P[k].m==='x')VEGX[k]=1});
-var MTAG={g:['g','Genuine leather'],v:['v','Vegan leather, not genuine'],p:['v','Vegan leather patch'],x:['v','Some styles are vegan leather']};
+var MATS={glwallet:['Genuine leather'],gltoil:['Genuine leather'],glkey:['Genuine leather'],gllug:['Genuine leather'],glpass:['Genuine leather'],
+tumbler:['Stainless steel'],bottle:['Stainless steel'],glass:['Glass'],flask:['Stainless steel','Vegan leather'],knife:['Stainless steel'],gcard:['Wood'],orn:['Glass','Metal','Vegan leather'],
+jbox:['Vegan leather'],toil:['Vegan leather'],makeup:['Vegan leather'],cosm:['Vegan leather'],billfold:['Vegan leather'],wallet:['Aluminum'],mcard:['Aluminum','Stainless steel','Titanium'],brace:['Stainless steel','Silicone'],brim:['Stainless steel'],bible:['Vegan leather'],
+jewel:['Stainless steel'],mtool:['Stainless steel'],hat:['Vegan leather patch'],pen:['Aluminum'],pad:['Vegan leather'],key:['Vegan leather'],badge:['Acrylic'],coast:['Vegan leather'],bev:['Vegan leather'],opener:['Vegan leather'],wedge:['Vegan leather'],cardh:['Vegan leather'],
+lrm:['Vegan leather'],scrip:['Vegan leather'],cross:['Wood'],paw:['Wood'],snow:['Wood'],board:['Wood']};
+Object.keys(MATS).forEach(function(k){if(P[k])P[k].mt=MATS[k]});
+function mcls(x){return x==='Genuine leather'?'g':(/vegan/i.test(x)?'v':'o')}
+var MCH=[['Stainless steel','stainless'],['Aluminum','alumin(?:um|ium)'],['Wood','wood|walnut|maple|bamboo'],['Glass','glass'],['Vegan leather','vegan|faux|leatherette|pu leather'],['Acrylic','acrylic'],['Silicone','silicone']];
+var SELM={};
 (function(){
   var M={billfold:'glwallet',key:'glkey',toil:'gltoil'};
   function gi(t){return t.replace(/vegan leather/gi,'genuine leather')}
@@ -253,7 +264,9 @@ function $(i){return document.getElementById(i)}
 function mk(id,list,cls){var el=$(id);list.forEach(function(c,i){var b=document.createElement('button');b.type='button';b.className='chip';if(cls&&i>=12)b.className+=' '+cls;b.textContent=c[0];b.setAttribute('aria-pressed','false');b.onclick=function(){var on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',on?'true':'false');if(c[1]){if(on)SEL[c[0]]=c[1];else delete SEL[c[0]];}LIM=6;run(true)};el.appendChild(b)})}
 mk('c_who',WHOCH);mk('c_love',LOVECH,'extra');mk('c_occ',OCCCH);
 document.querySelectorAll('.extra').forEach(function(b){b.classList.add('hid')});
-$('c_gen').onclick=function(){GEN=!GEN;this.setAttribute('aria-pressed',GEN?'true':'false');LIM=6;run(true)};
+function syncMat(){$('c_gen').setAttribute('aria-pressed',GEN?'true':'false');[].forEach.call($('c_mat').children,function(b){b.setAttribute('aria-pressed',SELM[b.getAttribute('data-k')]?'true':'false');b.className='chip'+(SELM[b.getAttribute('data-k')]?' on':'')})}
+$('c_gen').onclick=function(){GEN=!GEN;if(GEN)delete SELM['Vegan leather'];syncMat();LIM=6;run(true)};
+MCH.forEach(function(m){var b=document.createElement('button');b.type='button';b.className='chip';b.setAttribute('data-k',m[0]);b.setAttribute('aria-pressed','false');b.textContent=m[0];b.onclick=function(){if(SELM[m[0]])delete SELM[m[0]];else{SELM[m[0]]=1;if(m[0]==='Vegan leather'){GEN=false}}syncMat();LIM=6;run(true)};$('c_mat').appendChild(b)});
 $('m_love').onclick=function(){var hid=document.querySelector('.extra.hid');document.querySelectorAll('.extra').forEach(function(b){b.classList.toggle('hid',!hid)});this.textContent=hid?'Show fewer interests':'Show more interests'};
 function norm(s){return ' '+s.toLowerCase().replace(/[^a-z0-9é ']/g,' ').replace(/'/g,'').replace(/\s+/g,' ')+' '}
 function test(re,t){return new RegExp('\\b(?:'+re+')\\b','i').test(t)}
@@ -263,6 +276,9 @@ function run(fromChip){
   var t=norm(typed+' '+chips),sc={},idea={},idt={},lg={};
   var vWord=/\b(vegan|faux|synthetic|leatherette|pu leather)\b/.test(t),gWord=/\b(genuine|real leather|full grain|cowhide|top grain)\b/.test(t),lWord=/\bleather\b/.test(t);
   var genOn=GEN||(gWord&&!vWord);
+  var mset={};Object.keys(SELM).forEach(function(k){mset[k]=1});MCH.forEach(function(m){if(new RegExp('\\b(?:'+m[1]+')\\b').test(t)&&!(m[0]==='Vegan leather'&&genOn))mset[m[0]]=1});
+  var mkeys=Object.keys(mset);
+  function mok(p){if(!mkeys.length)return true;var mt=(P[p].mt||[]).join('|').toLowerCase();return mkeys.some(function(k){return mt.indexOf(k.toLowerCase())>=0})}
   var hits=INT.filter(function(i){return test(i.re,t)}),whos=WHO.filter(function(w){return test(w.re,t)});
   hits.forEach(function(h){h.it.forEach(function(x,i){var p=x[0],T0=LK[h.l]?lg:sc;T0[p]=(T0[p]||0)+Math.max(3,10-i);if(!idea[p]||idt[p]!=='i'){idea[p]=x[1];idt[p]='i'}})});
   whos.forEach(function(w){w.it.forEach(function(p,i){var T0=LK[w.l]?lg:sc;T0[p]=(T0[p]||0)+Math.max(1,(8-i)*0.4);if(!idea[p]){idea[p]=P[p].d;idt[p]='w'}})});
@@ -293,19 +309,19 @@ function run(fromChip){
   else if(vWord)Object.keys(VEGX).forEach(function(p){if(P[p].m!=='x')sc[p]=(sc[p]||0)+60;if(!idea[p]){idea[p]=P[p].d;idt[p]='v'}});
   else if(lWord)GIDS.forEach(function(p){sc[p]=(sc[p]||0)+60;if(!idea[p]){idea[p]=P[p].d;idt[p]='g'}});
   var out=$('out'),foot=$('foot'),none=false;
-  if(!typed&&!chips&&!GEN){out.innerHTML='';foot.style.display='none';return}
-  var matOnly=(genOn||lWord||vWord)&&!hits.length&&!whos.length&&!Object.keys(nmh).length;
+  if(!typed&&!chips&&!GEN&&!mkeys.length){out.innerHTML='';foot.style.display='none';return}
+  var matOnly=(genOn||lWord||vWord||mkeys.length)&&!hits.length&&!whos.length&&!Object.keys(nmh).length;
   if(!matOnly&&!hits.length&&!whos.length&&!Object.keys(nmh).length){none=true;FALL.forEach(function(p,i){sc[p]=20-i;idea[p]=P[p].d})}
-  var ids=Object.keys(sc).filter(function(p){return !(genOn&&VEGX[p])&&(!ex[p]||nmh[p])&&(!medOnly||rp[p])}).sort(function(a,b){return sc[b]-sc[a]||ORDER.indexOf(a)-ORDER.indexOf(b)});
-  if(!medOnly)ids=ids.concat(ORDER.filter(function(p){return !(p in sc)&&!ex[p]&&!(genOn&&VEGX[p])}));
+  var ids=Object.keys(sc).filter(function(p){return mok(p)&&!(genOn&&VEGX[p])&&(!ex[p]||nmh[p]||mkeys.length)&&(!medOnly||rp[p])}).sort(function(a,b){return sc[b]-sc[a]||ORDER.indexOf(a)-ORDER.indexOf(b)});
+  if(!medOnly)ids=ids.concat(ORDER.filter(function(p){return !(p in sc)&&(!ex[p]||mkeys.length)&&mok(p)&&!(genOn&&VEGX[p])}));
   var h='';
   if(none){h+='<div class="note"><b>I don’t know that one yet,</b> but here are gifts people love. Anything can be personalized, so <a href="https://www.jfcreationsar.com/contact" target="_blank" rel="noopener" style="color:#38761D;font-weight:700">tell us what you have in mind</a> and we will help you design it.</div>'}
-  else{var labels=whos.map(function(w){return w.l}).concat(hits.map(function(x){return x.l}));if(genOn)labels.push('genuine leather');else if(vWord)labels.push('vegan leather');Object.keys(nmh).forEach(function(p){labels.push(P[p].n)});h+='<div class="found"><b>Ideas for:</b>'+labels.map(function(l){return '<span class="pill">'+l+'</span>'}).join('')+'</div>'}
+  else{var labels=whos.map(function(w){return w.l}).concat(hits.map(function(x){return x.l}));mkeys.forEach(function(k){labels.push(k.toLowerCase())});if(genOn)labels.push('genuine leather');else if(vWord)labels.push('vegan leather');Object.keys(nmh).forEach(function(p){labels.push(P[p].n)});h+='<div class="found"><b>Ideas for:</b>'+labels.map(function(l){return '<span class="pill">'+l+'</span>'}).join('')+'</div>'}
   if(genOn)h+='<div class="note">Showing genuine leather first. Items made of vegan leather are hidden.</div>';
   if(!none){var tl='',sh=0;hits.concat(whos).forEach(function(x){var T=TIPS[x.l];if(T&&sh<3){sh++;tl+='<p><b>'+(x.l.charAt(0).toUpperCase()+x.l.slice(1))+':</b> '+T.join(' \u2022 ')+'</p>'}});
     if(tl)h+='<div class="tips"><h2>What you could put on it</h2>'+tl+'<p class="fin">Every design lets you type your own words, so these are just starting points. Your logo or your own picture can usually be added too.</p></div>'}
   h+='<div class="grid">';
-  ids.slice(0,LIM).forEach(function(p){var o=P[p],q=p==='sign';h+='<div class="card"><img src="'+IMG[o.t]+'" alt="'+o.n+'" loading="lazy" width="360" height="270"><div class="cb">'+(o.m&&MTAG[o.m]?'<span class="mat '+MTAG[o.m][0]+'">'+MTAG[o.m][1]+'</span>':'')+'<h3>'+o.n+'</h3><p>'+(idea[p]||o.d)+'</p><a class="btn" href="'+HREF(o.f)+'" target="_blank" rel="noopener">'+(q?'Request a quote':'Personalize it')+'</a></div></div>'});
+  ids.slice(0,LIM).forEach(function(p){var o=P[p],q=p==='sign';h+='<div class="card"><img src="'+IMG[o.t]+'" alt="'+o.n+'" loading="lazy" width="360" height="270"><div class="cb">'+(o.mt?'<div class="mats">'+o.mt.map(function(x){return '<span class="mat '+mcls(x)+'">'+x+'</span>'}).join('')+'</div>':'')+'<h3>'+o.n+'</h3><p>'+(idea[p]||o.d)+'</p><a class="btn" href="'+HREF(o.f)+'" target="_blank" rel="noopener">'+(q?'Request a quote':'Personalize it')+'</a></div></div>'});
   h+='</div>';
   if(ids.length>LIM)h+='<button class="showmore" id="sm" type="button">Show more ideas</button>';
   out.innerHTML=h;
