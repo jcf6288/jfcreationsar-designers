@@ -324,12 +324,12 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     if(!name){setMsg('Please enter your name.','bad');$('cname').focus();return;}
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setMsg('Please enter a valid email so we can reach you.','bad');$('cemail').focus();return;}
     var btn=$('send');btn.disabled=true;setMsg('Sending your design... this can take up to 15 seconds. Please keep this page open.','');
-    Promise.all([previewBlob(),artBlob()]).then(function(r){
+    Promise.resolve([]).then(function(r){
       var fd=new FormData();
       fd.append('name',name);fd.append('email',email);fd.append('_replyto',email);
       fd.append('_subject','Life Repair Manual Bible cover: '+F().label+' x'+q+(pickup()?' PICKUP':''));fd.append('_captcha','false');fd.append('_template','box');
       fd.append('order_details',summary());
-      fd.append('preview',r[0],'preview.jpg');fd.append('engraving_art',r[1],'engraving-art-black-on-white.png');
+      
       return window.jfSend(fd);
     }).then(function(){btn.disabled=false;setMsg('Sent! We will review your design and email you a secure payment link. We will reach out first if we have a question. Nothing is charged on this page.','ok');},
             function(){btn.disabled=false;setMsg('Sorry, that did not go through. Please try again, or email us at joseph@jfcreationsar.com.','bad');});
