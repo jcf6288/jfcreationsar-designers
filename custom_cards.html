@@ -106,6 +106,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     <div class="fld" id="r_l2_w"><label for="r_l2">Organization</label><input type="text" id="r_l2" maxlength="44" placeholder="Springfield Police Academy"></div>
     <div class="fld" id="r_l3_w"><label for="r_l3">Event and date</label><input type="text" id="r_l3" maxlength="44" placeholder="Graduation, June 12, 2026"></div>
     <div class="fld" id="r_by_w"><label for="r_by">Presented by</label><input type="text" id="r_by" maxlength="44" placeholder="Department or person"></div>
+    <div class="fld" id="r_free_w"><label for="r_free">Extra line of your own words (optional)</label><input type="text" id="r_free" maxlength="44" placeholder="Anything you want under the lines above"></div>
 
     <div class="fld" id="c_title_w"><label class="first" for="c_title">Title</label><input type="text" id="c_title" maxlength="40" placeholder="Our Grandson"></div>
     <div class="fld" id="c_sub_w"><label for="c_sub">Subtitle (optional)</label><input type="text" id="c_sub" maxlength="40" placeholder="Graduation Day"></div>
@@ -169,7 +170,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
   var LAYS=[['deploy','Deployment'],['wedding','Wedding day'],['recog','Officer or graduate'],['hand','Handwritten note'],['custom','Your own words']];
   var LAYNOTE={deploy:'A message for a son or daughter who is deploying.',wedding:'A message for a son or daughter on their wedding day.',recog:'A recognition card for an officer, graduate or award presentation.',hand:'We engrave your own handwriting, like a note from a parent or loved one.',custom:'Any words you like, with a title and a signature.'};
   var S={mat:'black',lay:'deploy'};
-  var f={};['f_rel','f_name','f_date','f_partner','f_sig','r_to','r_l2','r_l3','r_by','c_title','c_sub','c_body','h_note','f_qty','f_need','f_ship','cname','cemail','cphone','cnotes'].forEach(function(i){f[i]=$(i);});
+  var f={};['f_rel','f_name','f_date','f_partner','f_sig','r_to','r_l2','r_l3','r_by','r_free','c_title','c_sub','c_body','h_note','f_qty','f_need','f_ship','cname','cemail','cphone','cnotes'].forEach(function(i){f[i]=$(i);});
   var CARD={x:50,y:64,w:900,h:572};
   function mat(){return MATS.filter(function(m){return m.id===S.mat;})[0];}
   var cv=document.createElement('canvas').getContext('2d');
@@ -265,7 +266,7 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
       var body=(S.lay==='deploy')?DEP[rel]:wedBody(rel,f.f_partner.value);
       s+=bodyBlock(body,y+8,CARD.y+CARD.h-40,ink,f.f_sig.value.trim(),S.lay==='wedding'?30:32);
     }else if(S.lay==='recog'){
-      var y2=top+36,fl=true;
+      var y2=top+36,fl=true,s0=s,yTop=y2,yEnd=y2;s='';
       if(fl){s+=flag(cx,y2,210,ink,dot);y2+=210/1.9+16;}
       s+=hr(CARD.x+60,CARD.x+CARD.w-60,y2+4,ink);y2+=36;
       s+=T('PRESENTED TO',cx,y2+14,24,400,'normal','middle',ink,3);y2+=48;
@@ -274,9 +275,18 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
       var l2=(f.r_l2.value.trim()||'SPRINGFIELD POLICE ACADEMY').toUpperCase(),l3=(f.r_l3.value.trim()||'GRADUATION • JUNE 12, 2026').toUpperCase();
       [l2,l3].forEach(function(l){var sz=Math.min(32,Math.floor((CARD.w-140)/(W(l,32,400,'normal')/32)));s+=T(l,cx,y2+sz*0.7,sz,400,'normal','middle',ink,1);y2+=sz+10;});
       y2+=6;s+=hr(CARD.x+60,CARD.x+CARD.w-60,y2,ink);y2+=34;
-      var by='PRESENTED BY / '+(f.r_by.value.trim()||'DEPARTMENT LINE');by=by.toUpperCase();
-      var bs=Math.min(26,Math.floor((CARD.w-140)/(W(by,26,400,'normal')/26)));
-      s+=T(by,cx,y2,bs,400,'normal','middle',ink,1.5);
+      var byv=f.r_by.value.trim(),fr=f.r_free.value.trim().toUpperCase();
+      if(byv||!fr){
+        var by=('PRESENTED BY / '+(byv||'DEPARTMENT LINE')).toUpperCase();
+        var bs=Math.min(26,Math.floor((CARD.w-140)/(W(by,26,400,'normal')/26)));
+        s+=T(by,cx,y2,bs,400,'normal','middle',ink,1.5);yEnd=y2;y2+=bs+22;
+      }
+      if(fr){
+        var fs=Math.min(30,Math.floor((CARD.w-140)/(W(fr,30,400,'normal')/30)));
+        s+=T(fr,cx,y2,fs,400,'normal','middle',ink,1.5);yEnd=y2;
+      }
+      var dy=(CARD.y+CARD.h/2)-(yTop+yEnd)/2;
+      s=s0+'<g transform="translate(0,'+dy.toFixed(1)+')">'+s+'</g>';
     }else if(S.lay==='hand'){
       s+=T('Your handwriting',cx,CARD.y+CARD.h*0.45,78,400,'italic','middle',ink);
       s+=T('will be engraved here',cx,CARD.y+CARD.h*0.45+78,52,400,'italic','middle',ink);
@@ -321,14 +331,14 @@ footer{grid-column:1/-1;text-align:center;font-size:12px;color:var(--muted)}
     var m=mat(),L=[],lay=LAYS.filter(function(l){return l[0]===S.lay;})[0][1];
     L.push('METAL CARD REQUEST');L.push('Metal: '+m.name+' ('+money(m.price)+' per card)');L.push('Layout: '+lay);L.push('Quantity: '+(f.f_qty.value||1)+'   Needed by: '+(f.f_need.value||'not specified'));L.push('');
     if(S.lay==='deploy'||S.lay==='wedding'){L.push('For our: '+f.f_rel.value);L.push('Name: '+f.f_name.value.trim());L.push('Date: '+f.f_date.value.trim());if(S.lay==='deploy'){L.push('Flag: '+($('f_flag').checked?'yes':'no'));}else L.push('Partner: '+f.f_partner.value.trim());L.push('Signature: '+f.f_sig.value.trim());}
-    else if(S.lay==='recog'){L.push('Presented to: '+f.r_to.value.trim());L.push('Organization: '+f.r_l2.value.trim());L.push('Event/date: '+f.r_l3.value.trim());L.push('Presented by: '+f.r_by.value.trim());L.push('American flag: yes (standard)');L.push('Miranda warning on back: '+(mir()?'YES (+$8.00 per card)':'no'));}
+    else if(S.lay==='recog'){L.push('Presented to: '+f.r_to.value.trim());L.push('Organization: '+f.r_l2.value.trim());L.push('Event/date: '+f.r_l3.value.trim());L.push('Presented by: '+(f.r_by.value.trim()||'(none)'));if(f.r_free.value.trim())L.push('Extra line: '+f.r_free.value.trim());L.push('American flag: yes (standard)');L.push('Miranda warning on back: '+(mir()?'YES (+$8.00 per card)':'no'));}
     else if(S.lay==='hand'){L.push('Handwriting file: '+($('h_file').files[0]?$('h_file').files[0].name:'none'));L.push('Notes: '+f.h_note.value.trim());}
     else{L.push('Title: '+f.c_title.value.trim());L.push('Subtitle: '+f.c_sub.value.trim());L.push('Message: '+f.c_body.value.trim());L.push('Signature: '+f.f_sig.value.trim());}
     L.push('Delivery: '+(shipFee()?'Ship to customer (+$5.00)':'Local pickup'));L.push('');L.push('Customer: '+f.cname.value.trim()+' <'+f.cemail.value.trim()+'> '+f.cphone.value.trim());L.push('Notes: '+f.cnotes.value.trim());
     return L.join('\n');
   }
   function showFields(){
-    var on={deploy:['f_rel_w','f_name_w','f_date_w','f_sig_w','flag_w'],wedding:['f_rel_w','f_name_w','f_date_w','f_partner_w','f_sig_w'],recog:['r_to_w','r_l2_w','r_l3_w','r_by_w','mir_w'],hand:['h_w'],custom:['c_title_w','c_sub_w','c_body_w','f_sig_w']}[S.lay];
+    var on={deploy:['f_rel_w','f_name_w','f_date_w','f_sig_w','flag_w'],wedding:['f_rel_w','f_name_w','f_date_w','f_partner_w','f_sig_w'],recog:['r_to_w','r_l2_w','r_l3_w','r_by_w','r_free_w','mir_w'],hand:['h_w'],custom:['c_title_w','c_sub_w','c_body_w','f_sig_w']}[S.lay];
     Array.prototype.forEach.call(document.querySelectorAll('.fld'),function(e){e.className='fld'+(on.indexOf(e.id)>=0?' on':'');});
     $('layNote').textContent=LAYNOTE[S.lay];
   }
